@@ -43,7 +43,10 @@ namespace Repository.Models
                     .HasColumnName("creationTime")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.MovieId).HasColumnName("movieId");
+                entity.Property(e => e.ImdbId)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("imdbId");
 
                 entity.Property(e => e.Review1)
                     .HasColumnType("text")

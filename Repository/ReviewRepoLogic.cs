@@ -16,6 +16,7 @@ namespace Repository
         {
             _dbContext = dbContext;
         }
+
         /// <summary>
         /// Adds the Review specified in the argument to the database.
         /// If the User has already reviewed this movie, the review is replaced.
@@ -27,21 +28,9 @@ namespace Repository
         /// <returns></returns>
         public async Task<bool> AddReview(Review repoReview)
         {
-            var userExists = UserExists(repoReview.Username);
-            if(!userExists)
-            {
-                Console.WriteLine("RepoLogic.AddReview() was called for a user that doesn't exist.");
-                return false;
-            }
-            var movieExists = MovieExists(repoReview.MovieId);
-            if(!movieExists)
-            {
-                Console.WriteLine("RepoLogic.AddReview() was called for a movie that doesn't exist.");
-                return false;
-            }
             // If the User has already reviewed this movie, update it
             Review review = await _dbContext.Reviews.Where(r => 
-                    r.Username == repoReview.Username 
+                    r.UsernameId == repoReview.UsernameId
                     && r.MovieId == repoReview.MovieId).FirstOrDefaultAsync<Review>();
             if(review == null)
             {
@@ -49,11 +38,22 @@ namespace Repository
             }
             else
             {
-                review.Rating = repoReview.Rating;
+                review.Score = repoReview.Score;
                 review.Review1 = repoReview.Review1;
             }
             await _dbContext.SaveChangesAsync();
             return true;
+        }
+
+        /// <summary>
+        /// Returns a list of all Review objects from the database that match the movie ID specified
+        /// in the argument. Returns null if the movie doesn't exist.
+        /// </summary>
+        /// <param name="movieid"></param>
+        /// <returns></returns>
+        public async Task<List<Review>> GetMovieReviews(string movieid)
+        {
+            return await _dbContext.Reviews.Where(r => r.MovieId == movieid).ToListAsync();
         }
     }
 }

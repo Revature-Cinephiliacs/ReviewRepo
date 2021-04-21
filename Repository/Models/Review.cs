@@ -9,8 +9,8 @@ namespace Repository.Models
     {
         public Guid ReviewId { get; set; }
         public Guid UsernameId { get; set; }
-        public Guid MovieId { get; set; }
-        public double Score { get; set; }
+        public string ImdbId { get; set; }
+        public decimal Score { get; set; }
         public string Review1 { get; set; }
         public DateTime CreationTime { get; set; }
     }

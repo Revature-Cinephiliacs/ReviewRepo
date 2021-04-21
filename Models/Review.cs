@@ -7,15 +7,14 @@ namespace GlobalModels
     {
         [Required]
         [StringLength(20)]
-        public string Movieid { get; set; }
+        public string Imdbid { get; set; }
 
         [Required]
-        [StringLength(30)]
-        public string Username { get; set; }
+        public Guid Usernameid { get; set; }
 
         [Required]
         [Range(0,5)]
-        public decimal Rating { get; set; }
+        public double Score { get; set; }
 
         [Required]
         [StringLength(300)]
@@ -25,11 +24,11 @@ namespace GlobalModels
             
         }
 
-        public Review(string movieid, string username, decimal rating, string text)
+        public Review(string movieid, Guid userid, double rating, string text)
         {
-            Movieid = movieid;
-            Username = username;
-            Rating = rating;
+            Imdbid = movieid;
+            Usernameid = userid;
+            Score = rating;
             Text = text;
         }
 
@@ -50,7 +49,7 @@ namespace GlobalModels
                 return false;
             }
 
-            return Movieid == other.Movieid;
+            return Imdbid == other.Imdbid;
         }
 
         public override bool Equals(object obj)
@@ -79,7 +78,7 @@ namespace GlobalModels
 
         public override int GetHashCode()
         {
-            return Movieid.GetHashCode();
+            return Imdbid.GetHashCode();
         }
     }
 }

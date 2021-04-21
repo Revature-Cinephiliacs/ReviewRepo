@@ -33,7 +33,7 @@ namespace Logic
             var reviews = new List<Review>();
             foreach (var repoReview in repoReviews)
             {
-                reviews.Add(Mapper.RepoReviewToReview(repoReview));
+                reviews.Add(ReviewMapper.RepoReviewToReview(repoReview));
             }
             return reviews;
         }
@@ -46,12 +46,6 @@ namespace Logic
         /// <returns></returns>
         public async Task<List<Review>> GetMovieReviews(string movieid)
         {
-            var movieExists = MovieExists(movieid);
-            if(!movieExists)
-            {
-                Console.WriteLine("RepoLogic.GetMovieReviews() was called for a movie that doesn't exist.");
-                return null;
-            }
             return await _repo.Reviews.Where(r => r.MovieId == movieid).ToListAsync();
         }
 

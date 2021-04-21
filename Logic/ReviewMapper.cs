@@ -1,5 +1,6 @@
 using System;
 using GlobalModels;
+using Repository.Models;
 using Models.Review;
 
 namespace Logic
@@ -14,7 +15,7 @@ namespace Logic
         /// <returns></returns>
         public static Review RepoReviewToReview(Repository.Models.Review repoReview)
         {
-            var review = new Review(repoReview.MovieId, repoReview.Username, repoReview.Rating,
+            var review = new Review(repoReview.ImdbId, repoReview.UsernameId, repoReview.Score,
                 repoReview.Review1);
             return review;
         }
@@ -29,9 +30,9 @@ namespace Logic
         public static Repository.Models.Review ReviewToRepoReview(Review review)
         {
             var repoReview = new Repository.Models.Review();
-            repoReview.Username = review.Username;
-            repoReview.MovieId = review.Movieid;
-            repoReview.Rating = review.Rating;
+            repoReview.UsernameId = review.Usernameid;
+            repoReview.ImdbId = review.Imdbid;
+            repoReview.Score = review.Score;
             repoReview.Review1 = review.Text;
             repoReview.CreationTime = DateTime.Now;
 
