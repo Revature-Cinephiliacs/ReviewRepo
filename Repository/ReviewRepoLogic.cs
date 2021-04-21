@@ -1,9 +1,21 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Repository.Models;
 
 namespace Repository
 {
     public class ReviewRepoLogic
-    {
+    {        
+        private readonly ReviewDBContext _dbContext;
+
+        public ReviewRepoLogic(ReviewDBContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
         /// <summary>
         /// Adds the Review specified in the argument to the database.
         /// If the User has already reviewed this movie, the review is replaced.

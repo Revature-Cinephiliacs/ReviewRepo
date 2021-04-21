@@ -12,7 +12,7 @@ namespace ReviewApi.Controllers
     public class ReviewController : ControllerBase
     {
         private readonly IReviewLogic _reviewLogic;
-        public MovieController(IReviewLogic reviewLogic)
+        public ReviewController(IReviewLogic reviewLogic)
         {
             _reviewLogic = reviewLogic;
         }

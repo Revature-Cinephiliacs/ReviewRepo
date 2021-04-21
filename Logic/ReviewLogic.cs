@@ -7,7 +7,7 @@ using Repository;
 
 namespace Logic
 {
-    public class ReveiwLogic : Interfaces.IReveiwLogic
+    public class ReviewLogic : Interfaces.IReviewLogic
     {
         private readonly ReviewRepoLogic _repo;
         
@@ -36,6 +36,23 @@ namespace Logic
                 reviews.Add(Mapper.RepoReviewToReview(repoReview));
             }
             return reviews;
+        }
+
+        /// <summary>
+        /// Returns a list of all Review objects from the database that match the movie ID specified
+        /// in the argument. Returns null if the movie doesn't exist.
+        /// </summary>
+        /// <param name="movieid"></param>
+        /// <returns></returns>
+        public async Task<List<Review>> GetMovieReviews(string movieid)
+        {
+            var movieExists = MovieExists(movieid);
+            if(!movieExists)
+            {
+                Console.WriteLine("RepoLogic.GetMovieReviews() was called for a movie that doesn't exist.");
+                return null;
+            }
+            return await _repo.Reviews.Where(r => r.MovieId == movieid).ToListAsync();
         }
 
         /// <summary>
@@ -107,7 +124,7 @@ namespace Logic
 
             for (int i = startIndex; i <= endIndex; i++)
             {
-                reviews.Add(Mapper.RepoReviewToReview(repoReviews[i]));
+                reviews.Add(ReviewMapper.RepoReviewToReview(repoReviews[i]));
             }
             return reviews;
         }
@@ -130,7 +147,7 @@ namespace Logic
         /// </summary>
         public async Task<bool> CreateReview(Review review)
         {
-            var repoReview = Mapper.ReviewToRepoReview(review);
+            var repoReview = ReviewMapper.ReviewToRepoReview(review);
             return await _repo.AddReview(repoReview);
         }
     }
