@@ -19,10 +19,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Logic\Logic.csproj" />
-    <ProjectReference Include="..\Models\Models.csproj" />
-    <ProjectReference Include="..\Repository\Repository.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -23,7 +23,7 @@ namespace Repository.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=ReviewDB;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=ReviewDB;Trusted_Connection=True;");
             }
         }
 
