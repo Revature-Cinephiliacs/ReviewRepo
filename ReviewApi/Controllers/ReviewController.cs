@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using GlobalModels;
+using Logic.Interfaces;
+
 
 namespace ReviewApi.Controllers
 {
@@ -16,6 +18,17 @@ namespace ReviewApi.Controllers
         {
             _reviewLogic = reviewLogic;
         }
+
+        /// <summary>
+        /// Example for using authentication
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("users")]
+        [Authorize]
+        public async Task<ActionResult<string>> GetExample()
+        {
+            return Ok(new { response = "success" });
+        }        
 
         /// <summary>
         /// Returns a list of all Review objects for the specified movie ID.
