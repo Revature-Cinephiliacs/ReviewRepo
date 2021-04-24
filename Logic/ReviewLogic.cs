@@ -47,7 +47,7 @@ namespace Logic
         /// <returns></returns>
         public async Task<List<Repository.Models.Review>> GetMovieReviews(string movieid)
         {
-            return await _repo.Reviews.Where(r => r.ImdbId == movieid).ToListAsync();
+            return await _repo.GetMovieReviews(movieid);
         }
 
         /// <summary>
