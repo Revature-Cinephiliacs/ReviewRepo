@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Repository.Models
 {
-    public partial class ReviewDBContext : DbContext
+    public partial class Cinephiliacs_ReviewContext : DbContext
     {
-        public ReviewDBContext()
+        public Cinephiliacs_ReviewContext()
         {
         }
 
-        public ReviewDBContext(DbContextOptions<ReviewDBContext> options)
+        public Cinephiliacs_ReviewContext(DbContextOptions<Cinephiliacs_ReviewContext> options)
             : base(options)
         {
         }
@@ -24,7 +24,8 @@ namespace Repository.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=ReviewDB;Trusted_Connection=True;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=tcp:cinephiliacs.database.windows.net,1433;Initial Catalog=Cinephiliacs_Review;Persist Security Info=False;User ID=kugelsicher;Password=F36UWevqvcDxEmt;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }
 
