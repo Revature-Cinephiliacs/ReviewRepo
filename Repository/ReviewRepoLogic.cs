@@ -10,9 +10,9 @@ namespace Repository
 {
     public class ReviewRepoLogic
     {        
-        private readonly ReviewDBContext _dbContext;
+        private readonly Cinephiliacs_ReviewContext _dbContext;
 
-        public ReviewRepoLogic(ReviewDBContext dbContext)
+        public ReviewRepoLogic(Cinephiliacs_ReviewContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -63,7 +63,7 @@ namespace Repository
         /// <returns></returns>
         public Setting GetSetting(string key)
         {
-            return _dbContext.Settings.Where(s => s.Setting1 == key).FirstOrDefault<Setting>();
+            return _dbContext.Settings.FirstOrDefault(s => s.Setting1 == key);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Repository
             if(SettingExists(setting.Setting1))
             {
                 Setting existentSetting = await _dbContext.Settings.Where(
-                    s => s.Setting1 == setting.Setting1).FirstOrDefaultAsync<Setting>();
+                    s => s.Setting1 == setting.Setting1).FirstOrDefaultAsync();
                 if(setting.IntValue != null)
                 {
                     existentSetting.IntValue = setting.IntValue;
@@ -107,7 +107,7 @@ namespace Repository
         /// <returns></returns>
         private bool SettingExists(string key)
         {
-            return (_dbContext.Settings.Where(s => s.Setting1 == key).FirstOrDefault<Setting>() != null);
+            return (_dbContext.Settings.FirstOrDefault(s => s.Setting1 == key) != null);
         }
     }
 }
