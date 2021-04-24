@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using GlobalModels;
+using Models;
 
 namespace ReviewApi.Controllers
 {

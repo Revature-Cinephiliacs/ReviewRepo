@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace GlobalModels
+namespace Models
 {
     public sealed class Review : IEquatable<Review>
     {

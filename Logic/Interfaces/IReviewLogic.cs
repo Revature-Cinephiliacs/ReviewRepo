@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GlobalModels;
+using Models;
 
 namespace Logic.Interfaces
 {

@@ -18,12 +18,13 @@ namespace Repository.Models
         }
 
         public virtual DbSet<Review> Reviews { get; set; }
+        public virtual DbSet<Setting> Settings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=ReviewDB;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=ReviewDB;Trusted_Connection=True;");
             }
         }
 
@@ -55,6 +56,25 @@ namespace Repository.Models
                 entity.Property(e => e.Score).HasColumnName("score");
 
                 entity.Property(e => e.UsernameId).HasColumnName("usernameId");
+            });
+
+            modelBuilder.Entity<Setting>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("Setting");
+
+                entity.Property(e => e.IntValue).HasColumnName("intValue");
+
+                entity.Property(e => e.Setting1)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("setting")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.StringValue)
+                    .HasMaxLength(255)
+                    .HasColumnName("stringValue");
             });
 
             OnModelCreatingPartial(modelBuilder);
