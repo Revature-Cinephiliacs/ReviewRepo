@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication;
+using ReviewApi.AuthenticationHelper;
 
 namespace ReviewRepo
 {
@@ -28,6 +30,30 @@ namespace ReviewRepo
         {
 
             services.AddControllers();
+
+
+            // for authentication
+            services.AddAuthentication(o =>
+            {
+                o.DefaultScheme = "scheme";
+            })
+            .AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>(
+                "scheme", o => { });
+
+            var permissions = new[] {
+                // "loggedin", // for signed in
+                "manage:forums", // for moderator (is signed in)
+                "manage:awebsite", // for admin (is moderator and signed in)
+            };
+            services.AddAuthorization(options =>
+            {
+                for (int i = 0; i < permissions.Length; i++)
+                {
+                    options.AddPolicy(permissions[i], policy => policy.RequireClaim(permissions[i], "true"));
+                }
+            });
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ReviewRepo", Version = "v1" });
@@ -47,6 +73,8 @@ namespace ReviewRepo
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
