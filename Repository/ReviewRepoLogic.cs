@@ -31,7 +31,7 @@ namespace Repository
             // If the User has already reviewed this movie, update it
             Review review = await _dbContext.Reviews.Where(r => 
                     r.UsernameId == repoReview.UsernameId
-                    && r.ImdbId == repoReview.ImdbId).FirstOrDefaultAsync<Review>();
+                    && r.ImdbId == repoReview.ImdbId).FirstOrDefaultAsync();
             if(review == null)
             {
                 await _dbContext.Reviews.AddAsync(repoReview);
@@ -105,7 +105,7 @@ namespace Repository
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        private bool SettingExists(string key)
+        public bool SettingExists(string key)
         {
             return (_dbContext.Settings.FirstOrDefault(s => s.Setting1 == key) != null);
         }

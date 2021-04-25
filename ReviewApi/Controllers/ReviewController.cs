@@ -30,14 +30,14 @@ namespace ReviewApi.Controllers
         }        
 
         /// <summary>
-        /// Returns a list of all Review objects for the specified movie ID.
+        /// Returns a list of all ReviewDto objects for the specified movie ID.
         /// </summary>
         /// <param name="movieid"></param>
         /// <returns></returns>
         [HttpGet("{movieid}")]
-        public async Task<ActionResult<List<Review>>> GetReviews(string movieid)
+        public async Task<ActionResult<List<ReviewDto>>> GetReviews(string movieid)
         {
-            List<Review> reviews = await _reviewLogic.GetReviews(movieid);
+            List<ReviewDto> reviews = await _reviewLogic.GetReviews(movieid);
 
             if(reviews == null)
             {
@@ -52,7 +52,7 @@ namespace ReviewApi.Controllers
         }
 
         /// <summary>
-        /// Returns Review objects [n*(page-1), n*(page-1) + n] that are associated with the
+        /// Returns ReviewDto objects [n*(page-1), n*(page-1) + n] that are associated with the
         /// provided movie ID. Where n is the current page size for comments and sortorder
         /// is a string that determines how the Reviews are sorted before pagination.
         /// </summary>
@@ -61,9 +61,9 @@ namespace ReviewApi.Controllers
         /// <param name="sortorder"></param>
         /// <returns></returns>
         [HttpGet("{movieid}/{page}/{sortorder}")]
-        public async Task<ActionResult<List<Review>>> GetReviewsPage(string movieid, int page, string sortorder)
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsPage(string movieid, int page, string sortorder)
         {
-            List<Review> reviews = await _reviewLogic.GetReviewsPage(movieid, page, sortorder);
+            List<ReviewDto> reviews = await _reviewLogic.GetReviewsPage(movieid, page, sortorder);
 
             if(reviews == null)
             {
@@ -96,13 +96,13 @@ namespace ReviewApi.Controllers
         }
 
         /// <summary>
-        /// Adds a new Movie Review based on the information provided.
+        /// Adds a new Movie ReviewDto based on the information provided.
         /// Returns a 400 status code if creation fails.
         /// </summary>
-        /// <param name="review"></param>
+        /// <param name="reviewDto"></param>
         /// <returns></returns>
-        [HttpPost("review")]
-        public async Task<ActionResult> CreateReview([FromBody] Review review)
+        [HttpPost("reviewDto")]
+        public async Task<ActionResult> CreateReview([FromBody] ReviewDto reviewDto)
         {
             if(!ModelState.IsValid)
             {
@@ -110,7 +110,7 @@ namespace ReviewApi.Controllers
                 return StatusCode(400);
             }
 
-            if(await _reviewLogic.CreateReview(review))
+            if(await _reviewLogic.CreateReview(reviewDto))
             {
                 return StatusCode(201);
             }

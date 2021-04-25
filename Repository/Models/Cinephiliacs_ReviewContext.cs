@@ -50,9 +50,7 @@ namespace Repository.Models
                     .HasMaxLength(255)
                     .HasColumnName("imdbId");
 
-                entity.Property(e => e.Review1)
-                    .HasColumnType("text")
-                    .HasColumnName("review");
+                entity.Property(e => e.Review1).HasColumnName("review");
 
                 entity.Property(e => e.Score).HasColumnName("score");
 
@@ -61,9 +59,11 @@ namespace Repository.Models
 
             modelBuilder.Entity<Setting>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("Setting");
+
+                entity.Property(e => e.SettingId)
+                    .HasColumnName("settingId")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.IntValue).HasColumnName("intValue");
 
