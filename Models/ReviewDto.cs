@@ -13,23 +13,30 @@ namespace Models
         public Guid Usernameid { get; set; }
 
         [Required]
+        public Guid Reviewid { get; set; }
+
+        [Required]
         [Range(0,5)]
         public double Score { get; set; }
 
         [Required]
         [StringLength(300)]
-        public string Text { get; set; }
+        public string Review { get; set; }
+
+        public DateTime CreationTime { get; set; }
         public ReviewDto()
         {
             
         }
 
-        public ReviewDto(string movieid, Guid userid, double rating, string text)
+        public ReviewDto(string movieid, Guid userid, double rating, string review,Guid reviewid,DateTime creationTime)
         {
             Imdbid = movieid;
             Usernameid = userid;
             Score = rating;
-            Text = text;
+            Review = review;
+            Reviewid = reviewid;
+            CreationTime = creationTime;
         }
 
         public bool Equals(ReviewDto other)

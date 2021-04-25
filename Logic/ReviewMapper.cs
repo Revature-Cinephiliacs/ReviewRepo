@@ -12,10 +12,10 @@ namespace Logic
         /// </summary>
         /// <param name="repoReview"></param>
         /// <returns></returns>
-        public static Models.ReviewDto RepoReviewToReview(Repository.Models.Review repoReview)
+        public static ReviewDto RepoReviewToReview(Review repoReview)
         {
-            var review = new Models.ReviewDto(repoReview.ImdbId, repoReview.UsernameId, repoReview.Score,
-                repoReview.Review1);
+            var review = new ReviewDto(repoReview.ImdbId, repoReview.UsernameId, repoReview.Score,
+                repoReview.Review1,repoReview.ReviewId,repoReview.CreationTime);
             return review;
         }
 
@@ -26,13 +26,13 @@ namespace Logic
         /// </summary>
         /// <param name="reviewDto"></param>
         /// <returns></returns>
-        public static Repository.Models.Review ReviewToRepoReview(Models.ReviewDto reviewDto)
+        public static Review ReviewToRepoReview(ReviewDto reviewDto)
         {
-            var repoReview = new Repository.Models.Review();
+            var repoReview = new Review();
             repoReview.UsernameId = reviewDto.Usernameid;
             repoReview.ImdbId = reviewDto.Imdbid;
             repoReview.Score = reviewDto.Score;
-            repoReview.Review1 = reviewDto.Text;
+            repoReview.Review1 = reviewDto.Review;
             repoReview.CreationTime = DateTime.Now;
 
             return repoReview;
