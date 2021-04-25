@@ -109,5 +109,36 @@ namespace Repository
         {
             return (_dbContext.Settings.FirstOrDefault(s => s.Setting1 == key) != null);
         }
+
+        public async Task<List<Review>> getListofReviewsByUser(Guid userId)
+        {
+            return await _dbContext.Reviews.Where(r => r.UsernameId == userId).ToListAsync();
+        }
+        public  Review updateReview(Review updatedRev)
+        {
+            
+            var existingReview = _dbContext.Reviews.Find(updatedRev.ReviewId);
+            if (existingReview != null)
+            {
+                existingReview.Review1 = updatedRev.Review1;
+                _dbContext.Reviews.Update(existingReview);
+                _dbContext.SaveChangesAsync();
+            }
+
+            return updatedRev;
+
+        }
+
+        public async Task<Review> getSingleReview(Guid reviewId)
+        {
+            return await _dbContext.Reviews.FirstOrDefaultAsync(r =>r.ReviewId == reviewId);
+        }
+
+        public void deleteReview(Review review)
+        {
+             _dbContext.Reviews.Remove(review);
+             _dbContext.SaveChanges();
+        }
+        
     }
 }

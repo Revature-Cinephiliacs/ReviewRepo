@@ -39,6 +39,24 @@ namespace Logic
             return reviews;
         }
 
+        public async Task<List<ReviewDto>> GetReviewsByUser(Guid userId)
+        {
+            List<ReviewDto> revDto = new List<ReviewDto>();
+
+            List<Review> reviews = await _repo.getListofReviewsByUser(userId);
+            if (reviews == null )
+            {
+                return null;
+            }
+
+            foreach (var rev in reviews)
+            {
+                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+            }
+
+            return revDto;
+        }
+
         /// <summary>
         /// Returns ReviewDto objects [n*(page-1), n*(page-1) + n] whose MovieId
         /// is equal to the movieid argument. Where n is the current page size
@@ -74,16 +92,16 @@ namespace Logic
             switch (sortorder)
             {
                 case "ratingasc":
-                    repoReviews = repoReviews.OrderBy(r => r.Score).ToList<Review>();
+                    repoReviews = repoReviews.OrderBy(r => r.Score).ToList();
                 break;
                 case "ratingdsc":
-                    repoReviews = repoReviews.OrderByDescending(r => r.Score).ToList<Review>();
+                    repoReviews = repoReviews.OrderByDescending(r => r.Score).ToList();
                 break;
                 case "timeasc":
-                    repoReviews = repoReviews.OrderBy(r => r.CreationTime).ToList<Review>();
+                    repoReviews = repoReviews.OrderBy(r => r.CreationTime).ToList();
                 break;
                 case "timedsc":
-                    repoReviews = repoReviews.OrderByDescending(r => r.CreationTime).ToList<Review>();
+                    repoReviews = repoReviews.OrderByDescending(r => r.CreationTime).ToList();
                 break;
                 default:
                     return null;
@@ -124,6 +142,23 @@ namespace Logic
             setting.Setting1 = "reviewspagesize";
             setting.IntValue = pagesize;
             return await _repo.SetSetting(setting);
+        }
+
+
+        public Review UpdatedRev(Review reviewDto)
+        {
+            return _repo.updateReview(reviewDto);
+        }
+
+        public async Task<Review> getOneReview(Guid reviewId)
+        {
+            return await _repo.getSingleReview(reviewId);
+        }
+
+        public void deleteReview(Review reviewDto)
+        {
+            var rev = (reviewDto);
+            _repo.deleteReview(rev);
         }
 
         /// <summary>

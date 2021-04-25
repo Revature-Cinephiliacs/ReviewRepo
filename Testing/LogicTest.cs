@@ -205,5 +205,94 @@ namespace Testing
             Assert.True(result);
         }
 
+        [Fact]
+        public async Task GetallMovieByUserId()
+        {
+            var id = Guid.NewGuid();
+            List<Review> reviews = new List<Review>();
+            var review3 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = id,CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
+            var review4 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = id, CreationTime = DateTime.Now,ImdbId = "12345",Score = 5};
+            reviews.Add(review3);
+            reviews.Add(review4);
+
+            List<ReviewDto> result1 = new List<ReviewDto>(); 
+
+            using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context1.Database.EnsureDeleted();
+                context1.Database.EnsureCreated();
+                context1.Add(review3);
+                context1.Add(review4);
+                context1.SaveChanges();
+                List<Review> reviewsResult = await context1.Reviews.Where(r => r.UsernameId == id).ToListAsync();
+                foreach (var review in reviewsResult)
+                {
+                    result1.Add(ReviewMapper.RepoReviewToReview(review));
+                }
+            }
+            List<ReviewDto> result2 = new List<ReviewDto>(); 
+            using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context2.Database.EnsureCreated();
+                var msr = new ReviewRepoLogic(context2);
+                List<Review> reviewsResult = await msr.getListofReviewsByUser(id);
+                foreach (var review in reviewsResult)
+                {
+                    result2.Add(ReviewMapper.RepoReviewToReview(review));
+                }
+            }
+            Assert.Equal(result2.Count,result1.Count);
+        }
+
+        [Fact]
+        public void TestDelete()
+        {
+            var review = new Review() {ReviewId = Guid.NewGuid(), Review1 = "Some stuff"};
+
+            using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context1.Database.EnsureDeleted();
+                context1.Database.EnsureCreated();
+                context1.Reviews.Add(review);
+                context1.SaveChanges();
+
+            }
+
+            Review result;
+            using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context2.Database.EnsureCreated();
+                var msr = new ReviewRepoLogic(context2);
+                msr.deleteReview(review);
+                result =  msr.getSingleReview(review.ReviewId).Result;
+            }
+            Assert.NotEqual(review,result);
+        }
+
+        [Fact]
+        public void TestUpdateReview()
+        {
+            var review = new Review() {ReviewId = Guid.NewGuid(), Review1 = "Some stuff"};
+
+            using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context1.Database.EnsureDeleted();
+                context1.Database.EnsureCreated();
+                context1.Reviews.Add(review);
+                context1.SaveChanges();
+
+            }
+
+            Review result;
+            using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context2.Database.EnsureCreated();
+                var msr = new ReviewRepoLogic(context2);
+                result =  msr.getSingleReview(review.ReviewId).Result;
+                result.Review1 = "Other stuff";
+                msr.updateReview(result);
+            }
+            Assert.NotEqual(result.Review1,review.Review1);
+        }
     }
 }

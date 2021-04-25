@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Logic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Models;
 using Logic.Interfaces;
+using Repository.Models;
 
 namespace ReviewApi.Controllers
 {
@@ -27,7 +29,24 @@ namespace ReviewApi.Controllers
         public async Task<ActionResult<string>> GetExample()
         {
             return Ok(new { response = "success" });
-        }        
+        }
+
+        [HttpGet("ByUserId/{reviewId}")]
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByUserId(Guid userId)
+        {
+            List<ReviewDto> revDto = await _reviewLogic.GetReviewsByUser(userId);
+            if (revDto == null)
+            {
+                return StatusCode(404);
+            }
+            if(revDto.Count == 0)
+            {
+                return  StatusCode(204);
+            }
+
+            StatusCode(200);
+            return revDto;
+        }
 
         /// <summary>
         /// Returns a list of all ReviewDto objects for the specified movie ID.
@@ -89,10 +108,9 @@ namespace ReviewApi.Controllers
             {
                 return StatusCode(201);
             }
-            else
-            {
-                return StatusCode(400);
-            }
+            
+            return StatusCode(400);
+            
         }
 
         /// <summary>
@@ -114,10 +132,37 @@ namespace ReviewApi.Controllers
             {
                 return StatusCode(201);
             }
-            else
+            
+            return StatusCode(400);
+            
+        }
+        [HttpPatch("update/{reviewId}")]
+        public async Task<ActionResult> updateMovie(Guid reviewId,Review reviewDto)
+        {
+            var reviewExist = await _reviewLogic.getOneReview(reviewId);
+
+            if (reviewExist != null)
             {
-                return StatusCode(400);
+                reviewDto.ReviewId = reviewExist.ReviewId;
+                _reviewLogic.UpdatedRev(reviewDto);
+                return new StatusCodeResult(200);
             }
+
+            return new StatusCodeResult(404);
+
+        }
+
+        [HttpDelete("delete/{reviewId}")]
+        public async Task<ActionResult> deleteRev(Guid reviewId)
+        {
+            var rev = await _reviewLogic.getOneReview(reviewId);
+            if (rev != null)
+            {
+                _reviewLogic.deleteReview(rev);
+                return new StatusCodeResult(200);
+            }
+
+            return new StatusCodeResult(404);
         }
     }
 }
