@@ -157,8 +157,7 @@ namespace Logic
 
         public void deleteReview(Review reviewDto)
         {
-            var rev = (reviewDto);
-            _repo.deleteReview(rev);
+            _repo.deleteReview(reviewDto);
         }
 
         /// <summary>

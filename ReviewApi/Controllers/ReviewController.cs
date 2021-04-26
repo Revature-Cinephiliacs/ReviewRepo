@@ -31,7 +31,7 @@ namespace ReviewApi.Controllers
             return Ok(new { response = "success" });
         }
 
-        [HttpGet("ByUserId/{reviewId}")]
+        [HttpGet("ByUserId/{userId}")]
         public async Task<ActionResult<List<ReviewDto>>> GetReviewsByUserId(Guid userId)
         {
             List<ReviewDto> revDto = await _reviewLogic.GetReviewsByUser(userId);

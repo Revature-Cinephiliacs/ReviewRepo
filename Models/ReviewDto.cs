@@ -20,7 +20,7 @@ namespace Models
         public double Score { get; set; }
 
         [Required]
-        [StringLength(300)]
+        [StringLength(5000)]
         public string Review { get; set; }
 
         public DateTime CreationTime { get; set; }
