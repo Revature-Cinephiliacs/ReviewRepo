@@ -34,7 +34,7 @@ namespace ReviewApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("test")]
-        public async Review Test()
+        public async Task<ActionResult<Review>> Test()
         {
             string movieId = "tt1234561";
             Guid userId = new Guid();
