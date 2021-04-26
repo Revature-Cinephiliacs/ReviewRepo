@@ -36,7 +36,11 @@ namespace ReviewApi.Controllers
         [HttpGet("test")]
         public async Review Test()
         {
-            Review testReview = new Review("tt1234561", 12345678-1234-M123-N123-123456789012, 5.0, "This is a good movie");
+            string movieId = "tt1234561";
+            Guid userId = new Guid();
+            double score = 5.0;
+            string reviewTxt = "This is a good movie";
+            Review testReview = new Review(movieId, userId, score, reviewTxt);
             return testReview;
         }
 
