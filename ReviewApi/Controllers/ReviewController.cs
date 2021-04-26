@@ -27,7 +27,18 @@ namespace ReviewApi.Controllers
         public async Task<ActionResult<string>> GetExample()
         {
             return Ok(new { response = "success" });
-        }        
+        }
+        
+        /// <summary>
+        /// Test endpoint to ensure communication between the deployment and the db
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        public async Review Test()
+        {
+            Review testReview = new Review("tt1234561", 12345678-1234-M123-N123-123456789012, 5.0, "This is a good movie");
+            return testReview;
+        }
 
         /// <summary>
         /// Returns a list of all Review objects for the specified movie ID.
