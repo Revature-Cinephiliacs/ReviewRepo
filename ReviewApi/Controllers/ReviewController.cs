@@ -145,10 +145,10 @@ namespace ReviewApi.Controllers
             {
                 reviewDto.ReviewId = reviewExist.ReviewId;
                 _reviewLogic.UpdatedRev(reviewDto);
-                return new StatusCodeResult(200);
+                return  StatusCode(200);
             }
 
-            return new StatusCodeResult(404);
+            return  StatusCode(404);
 
         }
 
@@ -159,10 +159,44 @@ namespace ReviewApi.Controllers
             if (rev != null)
             {
                 _reviewLogic.deleteReview(rev);
-                return new StatusCodeResult(200);
+                return  StatusCode(200);
             }
 
-            return new StatusCodeResult(404);
+            return StatusCode(404);
+        }
+
+        [HttpGet("/byRating/{rating}")]
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByRating(int rating)
+        {
+            List<ReviewDto> reviews = await _reviewLogic.GetReviewsByRating(rating);
+
+            if(reviews == null)
+            {
+                return StatusCode(404);
+            }
+            if(reviews.Count == 0)
+            {
+                return StatusCode(204);
+            }
+            StatusCode(200);
+            return reviews;
+        }
+        
+        [HttpGet("/byRating/{imdb}/{rating}")]
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByRating(string imdb,int rating)
+        {
+            List<ReviewDto> reviews = await _reviewLogic.GetReviewsByRating(imdb,rating);
+
+            if(reviews == null)
+            {
+                return StatusCode(404);
+            }
+            if(reviews.Count == 0)
+            {
+                return StatusCode(204);
+            }
+            StatusCode(200);
+            return reviews;
         }
     }
 }

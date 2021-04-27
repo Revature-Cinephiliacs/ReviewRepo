@@ -160,6 +160,42 @@ namespace Logic
             _repo.deleteReview(reviewDto);
         }
 
+        public async Task<List<ReviewDto>> GetReviewsByRating(int rating)
+        {
+            List<ReviewDto> revDto = new List<ReviewDto>();
+
+            List<Review> reviews = await _repo.getAllReviewByRating(rating);
+            if (reviews == null )
+            {
+                return null;
+            }
+
+            foreach (var rev in reviews)
+            {
+                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+            }
+
+            return revDto;
+        }
+
+        public async Task<List<ReviewDto>> GetReviewsByRating(string imdb,int rating)
+        {
+            List<ReviewDto> revDto = new List<ReviewDto>();
+
+            List<Review> reviews = await _repo.getAllReviewByRating(imdb,rating);
+            if (reviews == null )
+            {
+                return null;
+            }
+
+            foreach (var rev in reviews)
+            {
+                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+            }
+
+            return revDto;
+        }
+
         /// <summary>
         /// Sets the page size for reviews.
         /// </summary>

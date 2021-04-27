@@ -70,5 +70,9 @@ namespace Logic.Interfaces
         /// </summary>
         /// <param name="reviewDto"></param>
         void deleteReview(Review reviewDto);
+
+        Task<List<ReviewDto>> GetReviewsByRating(int rating);
+        Task<List<ReviewDto>> GetReviewsByRating(string imdb,int rating);
+
     }
 }

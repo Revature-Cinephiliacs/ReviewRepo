@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Testing
 {
-    public class UnitTest1
+    public class RepoLogicTest
     {
         readonly DbContextOptions<Cinephiliacs_ReviewContext> dbOptions =
             new DbContextOptionsBuilder<Cinephiliacs_ReviewContext>()
@@ -293,6 +293,100 @@ namespace Testing
                 msr.updateReview(result);
             }
             Assert.NotEqual(result.Review1,review.Review1);
+        }
+
+        [Fact]
+        public async Task ListOfReviewsByRating()
+        {
+            List<Review> reviews = new List<Review>();
+            var review3 = new Review()
+            {
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                Score = 4
+            };
+            var review2 = new Review()
+            {
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                Score = 4
+            };
+
+            var review4 = new Review()
+            {
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                Score = 5
+            };
+
+            reviews.Add(review3);
+            reviews.Add(review4);
+            reviews.Add(review2);
+
+            List<Review> result1;
+
+            using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context1.Database.EnsureDeleted();
+                context1.Database.EnsureCreated();
+                context1.Add(review3);
+                context1.Add(review4);
+                context1.Add(review2);
+                context1.SaveChanges();
+                result1 = await context1.Reviews.Where(r => r.Score == 4).ToListAsync();
+            }
+
+            List<Review> result2;
+            using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context2.Database.EnsureCreated();
+                var msr = new ReviewRepoLogic(context2);
+                result2 = await msr.getAllReviewByRating(4);
+            }
+
+            Assert.Equal(result2.Count, result1.Count);
+        }
+        [Fact]
+        public async Task ListOfReviewsByRatingAndImdb()
+        {
+            var review3 = new Review()
+            {
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                Score = 4
+            };
+            var review2 = new Review()
+            {
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                Score = 4
+            };
+
+            var review4 = new Review()
+            {
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                Score = 5
+            };
+
+           
+
+            List<Review> result1;
+
+            using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context1.Database.EnsureDeleted();
+                context1.Database.EnsureCreated();
+                context1.Add(review3);
+                context1.Add(review4);
+                context1.Add(review2);
+                context1.SaveChanges();
+                result1 = await context1.Reviews.Where(r => r.Score == 5 && r.ImdbId == "12345").ToListAsync();
+            }
+
+            List<Review> result2;
+            using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context2.Database.EnsureCreated();
+                var msr = new ReviewRepoLogic(context2);
+                result2 = await msr.getAllReviewByRating("12345",5);
+            }
+
+            Assert.Equal(result2.Count, result1.Count);
         }
     }
 }
