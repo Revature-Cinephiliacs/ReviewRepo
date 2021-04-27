@@ -134,6 +134,15 @@ namespace Repository
             return await _dbContext.Reviews.FirstOrDefaultAsync(r =>r.ReviewId == reviewId);
         }
 
+        public async Task<List<Review>> getAllReviewByRating(int rating)
+        {
+            return await _dbContext.Reviews.Where(r => r.Score == rating).ToListAsync();
+        }
+        public async Task<List<Review>> getAllReviewByRating(string imdb, int rating)
+        {
+            return await _dbContext.Reviews.Where(r => r.Score == rating && r.ImdbId == imdb).ToListAsync();
+        }
+
         public void deleteReview(Review review)
         {
              _dbContext.Reviews.Remove(review);

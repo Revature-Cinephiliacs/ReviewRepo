@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Testing
 {
-    public class TestMapper
+    public class MapperTest
     {
         [Fact]
         public void TestReviewToReviewDto()
