@@ -1,0 +1,27 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: revaturecinephiliacsreviewrepo 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: revaturecinephiliacsreviewrepo
+  template:
+    metadata:
+      labels:
+        app: revaturecinephiliacsreviewrepo 
+    spec:
+      containers:
+        - name: revaturecinephiliacsreviewrepo 
+          image: 03012021batchp3acr.azurecr.io/revaturecinephiliacsreviewrepo
+          ports:
+          - containerPort: 80
+          volumeMounts:
+          - name: secrets
+            mountPath: /app/secrets
+            readOnly: true
+      volumes:
+      - name: secrets
+        secret:
+          secretName: secret-appsettings
