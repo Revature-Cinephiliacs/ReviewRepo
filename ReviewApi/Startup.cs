@@ -34,7 +34,7 @@ namespace ReviewRepo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            var myConnectionString = Configuration.GetConnectionString("ReviewContextConnectionString");
+            var myConnectionString = Configuration.GetConnectionString("Cinephiliacs_Review");
             services.AddDbContext<Cinephiliacs_ReviewContext>(options =>
             {
                 if (!options.IsConfigured)
