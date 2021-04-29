@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Models
 {
-    public sealed class Review : IEquatable<Review>
+    public sealed class ReviewDto : IEquatable<ReviewDto>
     {
         [Required]
         [StringLength(20)]
@@ -13,26 +13,33 @@ namespace Models
         public Guid Usernameid { get; set; }
 
         [Required]
+        public Guid Reviewid { get; set; }
+
+        [Required]
         [Range(0,5)]
         public double Score { get; set; }
 
         [Required]
-        [StringLength(300)]
-        public string Text { get; set; }
-        public Review()
+        [StringLength(5000)]
+        public string Review { get; set; }
+
+        public DateTime CreationTime { get; set; }
+        public ReviewDto()
         {
             
         }
 
-        public Review(string movieid, Guid userid, double rating, string text)
+        public ReviewDto(string movieid, Guid userid, double rating, string review,Guid reviewid,DateTime creationTime)
         {
             Imdbid = movieid;
             Usernameid = userid;
             Score = rating;
-            Text = text;
+            Review = review;
+            Reviewid = reviewid;
+            CreationTime = creationTime;
         }
 
-        public bool Equals(Review other)
+        public bool Equals(ReviewDto other)
         {
             if (Object.ReferenceEquals(other, null))
             {
@@ -54,10 +61,10 @@ namespace Models
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as Review);
+            return this.Equals(obj as ReviewDto);
         }
 
-        public static bool operator ==(Review lhs, Review rhs)
+        public static bool operator ==(ReviewDto lhs, ReviewDto rhs)
         {
             if (Object.ReferenceEquals(lhs, null))
             {
@@ -71,7 +78,7 @@ namespace Models
             return lhs.Equals(rhs);
         }
 
-        public static bool operator !=(Review lhs, Review rhs)
+        public static bool operator !=(ReviewDto lhs, ReviewDto rhs)
         {
             return !(lhs == rhs);
         }

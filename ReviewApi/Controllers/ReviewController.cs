@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Logic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Models;
 using Logic.Interfaces;
+using Repository.Models;
 
 namespace ReviewApi.Controllers
 {
@@ -28,31 +30,40 @@ namespace ReviewApi.Controllers
         {
             return Ok(new { response = "success" });
         }
-        
         /// <summary>
-        /// Test endpoint to ensure communication between the deployment and the db
+        /// return a list of reviews depending on specific user stored in the DB
+        /// if the user exist but no review it will throw a no content status code
+        /// if the user doesn't exist it'll throw 404 not found
         /// </summary>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpGet("test")]
-        public async Task<ActionResult<Review>> Test()
+
+        [HttpGet("ByUserId/{userId}")]
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByUserId(Guid userId)
         {
-            string movieId = "tt1234561";
-            Guid userId = new Guid();
-            double score = 5.0;
-            string reviewTxt = "This is a good movie";
-            Review testReview = new Review(movieId, userId, score, reviewTxt);
-            return testReview;
+            List<ReviewDto> revDto = await _reviewLogic.GetReviewsByUser(userId);
+            if (revDto == null)
+            {
+                return StatusCode(404);
+            }
+            if(revDto.Count == 0)
+            {
+                return  StatusCode(204);
+            }
+
+            StatusCode(200);
+            return revDto;
         }
 
         /// <summary>
-        /// Returns a list of all Review objects for the specified movie ID.
+        /// Returns a list of all ReviewDto objects for the specified movie ID.
         /// </summary>
         /// <param name="movieid"></param>
         /// <returns></returns>
         [HttpGet("{movieid}")]
-        public async Task<ActionResult<List<Review>>> GetReviews(string movieid)
+        public async Task<ActionResult<List<ReviewDto>>> GetReviews(string movieid)
         {
-            List<Review> reviews = await _reviewLogic.GetReviews(movieid);
+            List<ReviewDto> reviews = await _reviewLogic.GetReviews(movieid);
 
             if(reviews == null)
             {
@@ -67,7 +78,7 @@ namespace ReviewApi.Controllers
         }
 
         /// <summary>
-        /// Returns Review objects [n*(page-1), n*(page-1) + n] that are associated with the
+        /// Returns ReviewDto objects [n*(page-1), n*(page-1) + n] that are associated with the
         /// provided movie ID. Where n is the current page size for comments and sortorder
         /// is a string that determines how the Reviews are sorted before pagination.
         /// </summary>
@@ -76,9 +87,9 @@ namespace ReviewApi.Controllers
         /// <param name="sortorder"></param>
         /// <returns></returns>
         [HttpGet("{movieid}/{page}/{sortorder}")]
-        public async Task<ActionResult<List<Review>>> GetReviewsPage(string movieid, int page, string sortorder)
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsPage(string movieid, int page, string sortorder)
         {
-            List<Review> reviews = await _reviewLogic.GetReviewsPage(movieid, page, sortorder);
+            List<ReviewDto> reviews = await _reviewLogic.GetReviewsPage(movieid, page, sortorder);
 
             if(reviews == null)
             {
@@ -104,20 +115,19 @@ namespace ReviewApi.Controllers
             {
                 return StatusCode(201);
             }
-            else
-            {
-                return StatusCode(400);
-            }
+            
+            return StatusCode(400);
+            
         }
 
         /// <summary>
-        /// Adds a new Movie Review based on the information provided.
+        /// Adds a new Movie ReviewDto based on the information provided.
         /// Returns a 400 status code if creation fails.
         /// </summary>
-        /// <param name="review"></param>
+        /// <param name="reviewDto"></param>
         /// <returns></returns>
-        [HttpPost("review")]
-        public async Task<ActionResult> CreateReview([FromBody] Review review)
+        [HttpPost("reviewDto")]
+        public async Task<ActionResult> CreateReview([FromBody] ReviewDto reviewDto)
         {
             if(!ModelState.IsValid)
             {
@@ -125,14 +135,96 @@ namespace ReviewApi.Controllers
                 return StatusCode(400);
             }
 
-            if(await _reviewLogic.CreateReview(review))
+            if(await _reviewLogic.CreateReview(reviewDto))
             {
                 return StatusCode(201);
             }
-            else
+            
+            return StatusCode(400);
+            
+        }
+        /// <summary>
+        /// updates the reviews posted by the user
+        /// first it'll check if the review exist in the database if not it'll throw 404
+        /// </summary>
+        /// <param name="reviewId"></param>
+        /// <param name="reviewDto"></param>
+        /// <returns></returns>
+        [HttpPatch("update/{reviewId}")]
+        public async Task<ActionResult> updateMovie(Guid reviewId,Review reviewDto)
+        {
+            var reviewExist = await _reviewLogic.getOneReview(reviewId);
+
+            if (reviewExist != null)
             {
-                return StatusCode(400);
+                reviewDto.ReviewId = reviewExist.ReviewId;
+                _reviewLogic.UpdatedRev(reviewDto);
+                return  StatusCode(200);
             }
+
+            return  StatusCode(404);
+
+        }
+        /// <summary>
+        /// delete a review by a specific reviewId
+        /// it'll check if the review exist 
+        /// </summary>
+        /// <param name="reviewId"></param>
+        /// <returns></returns>
+        [HttpDelete("delete/{reviewId}")]
+        public async Task<ActionResult> deleteRev(Guid reviewId)
+        {
+            var rev = await _reviewLogic.getOneReview(reviewId);
+            if (rev != null)
+            {
+                _reviewLogic.deleteReview(rev);
+                return  StatusCode(200);
+            }
+
+            return StatusCode(404);
+        }
+        /// <summary>
+        /// return a list of all the reviews in the database based on a score rating
+        /// </summary>
+        /// <param name="rating"></param>
+        /// <returns></returns>
+        [HttpGet("/byRating/{rating}")]
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByRating(int rating)
+        {
+            List<ReviewDto> reviews = await _reviewLogic.GetReviewsByRating(rating);
+
+            if(reviews == null)
+            {
+                return StatusCode(404);
+            }
+            if(reviews.Count == 0)
+            {
+                return StatusCode(204);
+            }
+            StatusCode(200);
+            return reviews;
+        }
+
+        /// <summary>
+        /// return a list of all the reviews in the database based on a score rating of a unique movie
+        /// </summary>
+        /// <param name="rating"></param>
+        /// <returns></returns>
+        [HttpGet("/byRating/{imdb}/{rating}")]
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByRating(string imdb,int rating)
+        {
+            List<ReviewDto> reviews = await _reviewLogic.GetReviewsByRating(imdb,rating);
+
+            if(reviews == null)
+            {
+                return StatusCode(404);
+            }
+            if(reviews.Count == 0)
+            {
+                return StatusCode(204);
+            }
+            StatusCode(200);
+            return reviews;
         }
     }
 }

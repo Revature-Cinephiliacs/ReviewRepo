@@ -7,32 +7,32 @@ namespace Logic
     public static class ReviewMapper
     {
         /// <summary>
-        /// Maps an instance of Repository.Models.Review onto a new instance of
-        /// GlobalModels.Review
+        /// Maps an instance of Repository.Models.ReviewDto onto a new instance of
+        /// GlobalModels.ReviewDto
         /// </summary>
         /// <param name="repoReview"></param>
         /// <returns></returns>
-        public static Models.Review RepoReviewToReview(Repository.Models.Review repoReview)
+        public static ReviewDto RepoReviewToReview(Review repoReview)
         {
-            var review = new Models.Review(repoReview.ImdbId, repoReview.UsernameId, repoReview.Score,
-                repoReview.Review1);
+            var review = new ReviewDto(repoReview.ImdbId, repoReview.UsernameId, repoReview.Score,
+                repoReview.Review1,repoReview.ReviewId,repoReview.CreationTime);
             return review;
         }
 
         /// <summary>
-        /// Maps an instance of GlobalModels.Review onto a new instance of
-        /// Repository.Models.Review. Sets Repository.Models.Review.CreationTime
+        /// Maps an instance of GlobalModels.ReviewDto onto a new instance of
+        /// Repository.Models.ReviewDto. Sets Repository.Models.ReviewDto.CreationTime
         /// to the current time.
         /// </summary>
-        /// <param name="review"></param>
+        /// <param name="reviewDto"></param>
         /// <returns></returns>
-        public static Repository.Models.Review ReviewToRepoReview(Models.Review review)
+        public static Review ReviewToRepoReview(ReviewDto reviewDto)
         {
-            var repoReview = new Repository.Models.Review();
-            repoReview.UsernameId = review.Usernameid;
-            repoReview.ImdbId = review.Imdbid;
-            repoReview.Score = review.Score;
-            repoReview.Review1 = review.Text;
+            var repoReview = new Review();
+            repoReview.UsernameId = reviewDto.Usernameid;
+            repoReview.ImdbId = reviewDto.Imdbid;
+            repoReview.Score = reviewDto.Score;
+            repoReview.Review1 = reviewDto.Review;
             repoReview.CreationTime = DateTime.Now;
 
             return repoReview;

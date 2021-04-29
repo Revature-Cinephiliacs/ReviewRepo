@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Logic;
+using Logic.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +14,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
+using Repository;
+using Repository.Models;
 using ReviewApi.AuthenticationHelper;
 
 namespace ReviewRepo
@@ -28,10 +33,17 @@ namespace ReviewRepo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
-
-
+            var myConnectionString = Configuration.GetConnectionString("Cinephiliacs_Review");
+            services.AddDbContext<Cinephiliacs_ReviewContext>(options =>
+            {
+                if (!options.IsConfigured)
+                {
+                    options.UseSqlServer(myConnectionString);
+                }
+            });
+            services.AddScoped<IReviewLogic,ReviewLogic>();
+            services.AddScoped<ReviewRepoLogic>();
             // for authentication
             services.AddAuthentication(o =>
             {

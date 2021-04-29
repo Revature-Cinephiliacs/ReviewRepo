@@ -18,11 +18,11 @@ namespace Logic
         }
 
         /// <summary>
-        /// Returns a list of every Review object whose Movieid is equal to
+        /// Returns a list of every ReviewDto object whose Movieid is equal to
         /// the movieid argument. Returns null if the movie doesn't
         /// exist.
         /// </summary>
-        public async Task<List<Models.Review>> GetReviews(string movieid)
+        public async Task<List<ReviewDto>> GetReviews(string movieid)
         {
             var repoReviews = await _repo.GetMovieReviews(movieid);
             if(repoReviews == null)
@@ -31,7 +31,7 @@ namespace Logic
                 return null;
             }
 
-            var reviews = new List<Models.Review>();
+            var reviews = new List<ReviewDto>();
             foreach (var repoReview in repoReviews)
             {
                 reviews.Add(ReviewMapper.RepoReviewToReview(repoReview));
@@ -39,25 +39,32 @@ namespace Logic
             return reviews;
         }
 
-        /// <summary>
-        /// Returns a list of all Review objects from the database that match the movie ID specified
-        /// in the argument. Returns null if the movie doesn't exist.
-        /// </summary>
-        /// <param name="movieid"></param>
-        /// <returns></returns>
-        public async Task<List<Repository.Models.Review>> GetMovieReviews(string movieid)
+        public async Task<List<ReviewDto>> GetReviewsByUser(Guid userId)
         {
-            return await _repo.GetMovieReviews(movieid);
+            List<ReviewDto> revDto = new List<ReviewDto>();
+
+            List<Review> reviews = await _repo.getListofReviewsByUser(userId);
+            if (reviews == null )
+            {
+                return null;
+            }
+
+            foreach (var rev in reviews)
+            {
+                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+            }
+
+            return revDto;
         }
 
         /// <summary>
-        /// Returns Review objects [n*(page-1), n*(page-1) + n] whose MovieId
+        /// Returns ReviewDto objects [n*(page-1), n*(page-1) + n] whose MovieId
         /// is equal to the movieid argument. Where n is the current page size
-        /// for reviews and sortorder determines how the Review objects are
+        /// for reviews and sortorder determines how the ReviewDto objects are
         /// sorted prior to pagination. Returns null if the movie doesn't
         /// exist.
         /// </summary>
-        public async Task<List<Models.Review>> GetReviewsPage(string movieid, int page, string sortorder)
+        public async Task<List<ReviewDto>> GetReviewsPage(string movieid, int page, string sortorder)
         {
             if(page < 1)
             {
@@ -65,7 +72,7 @@ namespace Logic
                 return null;
             }
 
-            Repository.Models.Setting pageSizeSetting = _repo.GetSetting("reviewspagesize");
+            Setting pageSizeSetting = _repo.GetSetting("reviewspagesize");
             int pageSize = (int)pageSizeSetting.IntValue;
             if(pageSize < 1)
             {
@@ -73,7 +80,7 @@ namespace Logic
                 return null;
             }
 
-            List<Repository.Models.Review> repoReviews = await _repo.GetMovieReviews(movieid);
+            List<Review> repoReviews = await _repo.GetMovieReviews(movieid);
 
             if(repoReviews == null)
             {
@@ -81,20 +88,19 @@ namespace Logic
                 return null;
             }
 
-            // Sort the list of Reviews
             switch (sortorder)
             {
                 case "ratingasc":
-                    repoReviews = repoReviews.OrderBy(r => r.Score).ToList<Repository.Models.Review>();
+                    repoReviews = repoReviews.OrderBy(r => r.Score).ToList();
                 break;
                 case "ratingdsc":
-                    repoReviews = repoReviews.OrderByDescending(r => r.Score).ToList<Repository.Models.Review>();
+                    repoReviews = repoReviews.OrderByDescending(r => r.Score).ToList();
                 break;
                 case "timeasc":
-                    repoReviews = repoReviews.OrderBy(r => r.CreationTime).ToList<Repository.Models.Review>();
+                    repoReviews = repoReviews.OrderBy(r => r.CreationTime).ToList();
                 break;
                 case "timedsc":
-                    repoReviews = repoReviews.OrderByDescending(r => r.CreationTime).ToList<Repository.Models.Review>();
+                    repoReviews = repoReviews.OrderByDescending(r => r.CreationTime).ToList();
                 break;
                 default:
                     return null;
@@ -115,7 +121,7 @@ namespace Logic
                 endIndex = numberOfReviews - 1;
             }
 
-            List<Models.Review> reviews = new List<Models.Review>();
+            List<ReviewDto> reviews = new List<ReviewDto>();
 
             for (int i = startIndex; i <= endIndex; i++)
             {
@@ -131,18 +137,66 @@ namespace Logic
                 return false;
             }
 
-            Repository.Models.Setting setting = new Repository.Models.Setting();
+            Setting setting = new Setting();
             setting.Setting1 = "reviewspagesize";
             setting.IntValue = pagesize;
             return await _repo.SetSetting(setting);
         }
 
-        /// <summary>
-        /// Sets the page size for reviews.
-        /// </summary>
-        public async Task<bool> CreateReview(Models.Review review)
+
+        public Review UpdatedRev(Review reviewDto)
         {
-            var repoReview = ReviewMapper.ReviewToRepoReview(review);
+            return _repo.updateReview(reviewDto);
+        }
+
+        public async Task<Review> getOneReview(Guid reviewId)
+        {
+            return await _repo.getSingleReview(reviewId);
+        }
+
+        public void deleteReview(Review reviewDto)
+        {
+            _repo.deleteReview(reviewDto);
+        }
+
+        public async Task<List<ReviewDto>> GetReviewsByRating(int rating)
+        {
+            List<ReviewDto> revDto = new List<ReviewDto>();
+
+            List<Review> reviews = await _repo.getAllReviewByRating(rating);
+            if (reviews == null )
+            {
+                return null;
+            }
+
+            foreach (var rev in reviews)
+            {
+                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+            }
+
+            return revDto;
+        }
+
+        public async Task<List<ReviewDto>> GetReviewsByRating(string imdb,int rating)
+        {
+            List<ReviewDto> revDto = new List<ReviewDto>();
+
+            List<Review> reviews = await _repo.getAllReviewByRating(imdb,rating);
+            if (reviews == null )
+            {
+                return null;
+            }
+
+            foreach (var rev in reviews)
+            {
+                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+            }
+
+            return revDto;
+        }
+        public async Task<bool> CreateReview(ReviewDto reviewDto)
+        {
+            var repoReview = ReviewMapper.ReviewToRepoReview(reviewDto);
             return await _repo.AddReview(repoReview);
         }
     }

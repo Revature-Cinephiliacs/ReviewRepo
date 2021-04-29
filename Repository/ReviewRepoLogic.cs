@@ -10,9 +10,9 @@ namespace Repository
 {
     public class ReviewRepoLogic
     {        
-        private readonly ReviewDBContext _dbContext;
+        private readonly Cinephiliacs_ReviewContext _dbContext;
 
-        public ReviewRepoLogic(ReviewDBContext dbContext)
+        public ReviewRepoLogic(Cinephiliacs_ReviewContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -31,7 +31,7 @@ namespace Repository
             // If the User has already reviewed this movie, update it
             Review review = await _dbContext.Reviews.Where(r => 
                     r.UsernameId == repoReview.UsernameId
-                    && r.ImdbId == repoReview.ImdbId).FirstOrDefaultAsync<Review>();
+                    && r.ImdbId == repoReview.ImdbId).FirstOrDefaultAsync();
             if(review == null)
             {
                 await _dbContext.Reviews.AddAsync(repoReview);
@@ -63,7 +63,7 @@ namespace Repository
         /// <returns></returns>
         public Setting GetSetting(string key)
         {
-            return _dbContext.Settings.Where(s => s.Setting1 == key).FirstOrDefault<Setting>();
+            return _dbContext.Settings.FirstOrDefault(s => s.Setting1 == key);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Repository
             if(SettingExists(setting.Setting1))
             {
                 Setting existentSetting = await _dbContext.Settings.Where(
-                    s => s.Setting1 == setting.Setting1).FirstOrDefaultAsync<Setting>();
+                    s => s.Setting1 == setting.Setting1).FirstOrDefaultAsync();
                 if(setting.IntValue != null)
                 {
                     existentSetting.IntValue = setting.IntValue;
@@ -105,9 +105,75 @@ namespace Repository
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        private bool SettingExists(string key)
+        public bool SettingExists(string key)
         {
-            return (_dbContext.Settings.Where(s => s.Setting1 == key).FirstOrDefault<Setting>() != null);
+            return (_dbContext.Settings.FirstOrDefault(s => s.Setting1 == key) != null);
         }
+        /// <summary>
+        /// Return a list of Reviews by userId
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<List<Review>> getListofReviewsByUser(Guid userId)
+        {
+            return await _dbContext.Reviews.Where(r => r.UsernameId == userId).ToListAsync();
+        }
+        /// <summary>
+        /// update the content of a specific review either by the admin or the user
+        /// </summary>
+        /// <param name="updatedRev"></param>
+        /// <returns></returns>
+        public  Review updateReview(Review updatedRev)
+        {
+            
+            var existingReview = _dbContext.Reviews.Find(updatedRev.ReviewId);
+            if (existingReview != null)
+            {
+                existingReview.Review1 = updatedRev.Review1;
+                _dbContext.Reviews.Update(existingReview);
+                _dbContext.SaveChangesAsync();
+            }
+
+            return updatedRev;
+
+        }
+        /// <summary>
+        /// it return a single review via it's primary key in the db ReviewId
+        /// </summary>
+        /// <param name="reviewId"></param>
+        /// <returns></returns>
+        public async Task<Review> getSingleReview(Guid reviewId)
+        {
+            return await _dbContext.Reviews.FirstOrDefaultAsync(r =>r.ReviewId == reviewId);
+        }
+        /// <summary>
+        /// return all the reviews depending on the score rating regardless of the movie
+        /// </summary>
+        /// <param name="rating"></param>
+        /// <returns></returns>
+        public async Task<List<Review>> getAllReviewByRating(int rating)
+        {
+            return await _dbContext.Reviews.Where(r => r.Score == rating).ToListAsync();
+        }
+        /// <summary>
+        /// return all the reviews depending on the score rating for a specific movie
+        /// </summary>
+        /// <param name="imdb"></param>
+        /// <param name="rating"></param>
+        /// <returns></returns>
+        public async Task<List<Review>> getAllReviewByRating(string imdb, int rating)
+        {
+            return await _dbContext.Reviews.Where(r => r.Score == rating && r.ImdbId == imdb).ToListAsync();
+        }
+        /// <summary>
+        /// an admin tool to delete a review if necessary
+        /// </summary>
+        /// <param name="review"></param>
+        public void deleteReview(Review review)
+        {
+             _dbContext.Reviews.Remove(review);
+             _dbContext.SaveChanges();
+        }
+        
     }
 }
