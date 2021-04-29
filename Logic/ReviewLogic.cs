@@ -199,5 +199,15 @@ namespace Logic
             var repoReview = ReviewMapper.ReviewToRepoReview(reviewDto);
             return await _repo.AddReview(repoReview);
         }
+        public async Task<List<ReviewDto>> GetReviewsByIDS(List<string> ids)
+        {
+            List<ReviewDto> revDto = new List<ReviewDto>();
+            
+            foreach (var rev in await _repo.getAllReviewsBYIDS(ids))
+            {
+                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+            }
+            return revDto;
+        }
     }
 }
