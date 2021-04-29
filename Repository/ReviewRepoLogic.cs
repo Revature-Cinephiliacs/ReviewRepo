@@ -109,11 +109,20 @@ namespace Repository
         {
             return (_dbContext.Settings.FirstOrDefault(s => s.Setting1 == key) != null);
         }
-
+        /// <summary>
+        /// Return a list of Reviews by userId
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<List<Review>> getListofReviewsByUser(Guid userId)
         {
             return await _dbContext.Reviews.Where(r => r.UsernameId == userId).ToListAsync();
         }
+        /// <summary>
+        /// update the content of a specific review either by the admin or the user
+        /// </summary>
+        /// <param name="updatedRev"></param>
+        /// <returns></returns>
         public  Review updateReview(Review updatedRev)
         {
             
@@ -128,21 +137,38 @@ namespace Repository
             return updatedRev;
 
         }
-
+        /// <summary>
+        /// it return a single review via it's primary key in the db ReviewId
+        /// </summary>
+        /// <param name="reviewId"></param>
+        /// <returns></returns>
         public async Task<Review> getSingleReview(Guid reviewId)
         {
             return await _dbContext.Reviews.FirstOrDefaultAsync(r =>r.ReviewId == reviewId);
         }
-
+        /// <summary>
+        /// return all the reviews depending on the score rating regardless of the movie
+        /// </summary>
+        /// <param name="rating"></param>
+        /// <returns></returns>
         public async Task<List<Review>> getAllReviewByRating(int rating)
         {
             return await _dbContext.Reviews.Where(r => r.Score == rating).ToListAsync();
         }
+        /// <summary>
+        /// return all the reviews depending on the score rating for a specific movie
+        /// </summary>
+        /// <param name="imdb"></param>
+        /// <param name="rating"></param>
+        /// <returns></returns>
         public async Task<List<Review>> getAllReviewByRating(string imdb, int rating)
         {
             return await _dbContext.Reviews.Where(r => r.Score == rating && r.ImdbId == imdb).ToListAsync();
         }
-
+        /// <summary>
+        /// an admin tool to delete a review if necessary
+        /// </summary>
+        /// <param name="review"></param>
         public void deleteReview(Review review)
         {
              _dbContext.Reviews.Remove(review);

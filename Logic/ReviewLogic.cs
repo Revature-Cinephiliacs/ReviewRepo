@@ -88,7 +88,6 @@ namespace Logic
                 return null;
             }
 
-            // Sort the list of Reviews
             switch (sortorder)
             {
                 case "ratingasc":
@@ -195,10 +194,6 @@ namespace Logic
 
             return revDto;
         }
-
-        /// <summary>
-        /// Sets the page size for reviews.
-        /// </summary>
         public async Task<bool> CreateReview(ReviewDto reviewDto)
         {
             var repoReview = ReviewMapper.ReviewToRepoReview(reviewDto);

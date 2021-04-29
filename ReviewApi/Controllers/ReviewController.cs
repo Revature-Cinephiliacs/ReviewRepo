@@ -30,7 +30,13 @@ namespace ReviewApi.Controllers
         {
             return Ok(new { response = "success" });
         }
-
+        /// <summary>
+        /// return a list of reviews depending on specific user stored in the DB
+        /// if the user exist but no review it will throw a no content status code
+        /// if the user doesn't exist it'll throw 404 not found
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet("ByUserId/{userId}")]
         public async Task<ActionResult<List<ReviewDto>>> GetReviewsByUserId(Guid userId)
         {
@@ -136,6 +142,13 @@ namespace ReviewApi.Controllers
             return StatusCode(400);
             
         }
+        /// <summary>
+        /// updates the reviews posted by the user
+        /// first it'll check if the review exist in the database if not it'll throw 404
+        /// </summary>
+        /// <param name="reviewId"></param>
+        /// <param name="reviewDto"></param>
+        /// <returns></returns>
         [HttpPatch("update/{reviewId}")]
         public async Task<ActionResult> updateMovie(Guid reviewId,Review reviewDto)
         {
@@ -151,7 +164,12 @@ namespace ReviewApi.Controllers
             return  StatusCode(404);
 
         }
-
+        /// <summary>
+        /// delete a review by a specific reviewId
+        /// it'll check if the review exist 
+        /// </summary>
+        /// <param name="reviewId"></param>
+        /// <returns></returns>
         [HttpDelete("delete/{reviewId}")]
         public async Task<ActionResult> deleteRev(Guid reviewId)
         {
@@ -164,7 +182,11 @@ namespace ReviewApi.Controllers
 
             return StatusCode(404);
         }
-
+        /// <summary>
+        /// return a list of all the reviews in the database based on a score rating
+        /// </summary>
+        /// <param name="rating"></param>
+        /// <returns></returns>
         [HttpGet("/byRating/{rating}")]
         public async Task<ActionResult<List<ReviewDto>>> GetReviewsByRating(int rating)
         {
@@ -181,7 +203,12 @@ namespace ReviewApi.Controllers
             StatusCode(200);
             return reviews;
         }
-        
+
+        /// <summary>
+        /// return a list of all the reviews in the database based on a score rating of a unique movie
+        /// </summary>
+        /// <param name="rating"></param>
+        /// <returns></returns>
         [HttpGet("/byRating/{imdb}/{rating}")]
         public async Task<ActionResult<List<ReviewDto>>> GetReviewsByRating(string imdb,int rating)
         {
