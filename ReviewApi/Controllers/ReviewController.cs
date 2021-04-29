@@ -37,6 +37,7 @@ namespace ReviewApi.Controllers
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
+
         [HttpGet("ByUserId/{userId}")]
         public async Task<ActionResult<List<ReviewDto>>> GetReviewsByUserId(Guid userId)
         {
