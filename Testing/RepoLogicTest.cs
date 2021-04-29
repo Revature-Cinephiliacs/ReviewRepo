@@ -388,5 +388,56 @@ namespace Testing
 
             Assert.Equal(result2.Count, result1.Count);
         }
+
+        [Fact]
+        public async Task TestGetReviewsByIds()
+        {
+            var review1 = new Review()
+            {
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                Score = 4
+            };
+            var review2 = new Review()
+            {
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                Score = 4
+            };
+
+            var review3 = new Review()
+            {
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                Score = 5
+            };
+            List<Guid> idGuids = new List<Guid>();
+            idGuids.Add(review1.ReviewId);
+            idGuids.Add(review2.ReviewId);
+            idGuids.Add(review3.ReviewId);
+
+            List<Review> result1;
+            using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context1.Database.EnsureDeleted();
+                context1.Database.EnsureCreated();
+                context1.Add(review1);
+                context1.Add(review2);
+                context1.Add(review3);
+                context1.SaveChanges();
+                result1 = await context1.Reviews.ToListAsync();
+            }
+            List<Review> result2;
+            using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context2.Database.EnsureCreated();
+                var msr = new ReviewRepoLogic(context2);
+                List<string> ids = new List<string>();
+                foreach (var guid in idGuids)
+                {
+                    ids.Add(guid.ToString());
+                }
+                result2 = await msr.getAllReviewsBYIDS(ids);
+            }
+
+            Assert.Equal(result2.Count, result1.Count);
+        }
     }
 }

@@ -89,6 +89,13 @@ namespace Logic.Interfaces
         /// <param name="rating"></param>
         /// <returns></returns>
         Task<List<ReviewDto>> GetReviewsByRating(string imdb,int rating);
+        
+        /// <summary>
+        /// return a List of reviews containing the reviewIds (Admin tool)
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Task<List<ReviewDto>> GetReviewsByIDS(List<string> ids);
 
     }
 }
