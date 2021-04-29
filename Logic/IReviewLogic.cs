@@ -63,6 +63,11 @@ namespace Logic.Interfaces
         /// <returns></returns>
         Review UpdatedRev(Review reviewDto);
 
+        /// <summary>
+        /// it return a single review via it's primary key in the db ReviewId
+        /// </summary>
+        /// <param name="reviewId"></param>
+        /// <returns></returns>
         Task<Review> getOneReview(Guid reviewId);
 
         /// <summary>
@@ -71,7 +76,18 @@ namespace Logic.Interfaces
         /// <param name="reviewDto"></param>
         void deleteReview(Review reviewDto);
 
+        /// <summary>
+        /// return all the reviews depending on the score rating regardless of the movie
+        /// </summary>
+        /// <param name="rating"></param>
+        /// <returns></returns>
         Task<List<ReviewDto>> GetReviewsByRating(int rating);
+        /// <summary>
+        /// return all the reviews depending on the score rating for a specific movie
+        /// </summary>
+        /// <param name="imdb"></param>
+        /// <param name="rating"></param>
+        /// <returns></returns>
         Task<List<ReviewDto>> GetReviewsByRating(string imdb,int rating);
 
     }
