@@ -174,6 +174,21 @@ namespace Repository
              _dbContext.Reviews.Remove(review);
              _dbContext.SaveChanges();
         }
-        
+
+        /// <summary>
+        /// return List of reviews based on the reviewId (Admin tool) 
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task<List<Review>> getAllReviewsBYIDS(List<string> ids)
+        {
+            List<Guid> IdsToString = new List<Guid>();
+            foreach (var id in ids)
+            {
+                IdsToString.Add(Guid.Parse(id));
+            }
+
+            return await _dbContext.Reviews.Where(u => IdsToString.Contains(u.ReviewId)).ToListAsync();
+        }
     }
 }
