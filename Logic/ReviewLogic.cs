@@ -209,5 +209,17 @@ namespace Logic
             }
             return revDto;
         }
+
+        /// <summary>
+        /// Gets a ReviewDto from ReviewController and passes it into the ReviewMapper
+        /// to get back a ReviewNotification that matches the ReviewDto.
+        /// </summary>
+        /// <param name="reviewDto"></param>
+        /// <returns></returns>
+        public ReviewNotification GetReviewNotification(ReviewDto reviewDto)
+        {
+            var reviewNotification = ReviewMapper.ReviewToReviewNotification(reviewDto);
+            return reviewNotification;
+        }
     }
 }

@@ -137,12 +137,27 @@ namespace ReviewApi.Controllers
 
             if(await _reviewLogic.CreateReview(reviewDto))
             {
+                ReviewNotification reviewNotification = _reviewLogic.GetReviewNotification(reviewDto);
+                SendNotification(reviewNotification)
                 return StatusCode(201);
             }
             
             return StatusCode(400);
             
         }
+
+        /// <summary>
+        /// When CreateReview is called successfully, it will trigger this method to send a notification
+        /// to Movies to get a list of userids who follow the movie associated with the imdbid contained
+        /// in the notification.
+        /// </summary>
+        /// <param name="reviewNotification"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<ReviewNotification>> SendNotification(ReviewNotification reviewNotification)
+        {
+            return reviewNotification;
+        }
+
         /// <summary>
         /// updates the reviews posted by the user
         /// first it'll check if the review exist in the database if not it'll throw 404
