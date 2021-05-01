@@ -10,7 +10,7 @@ namespace Models
         public string Imdbid { get; set; }
 
         [Required]
-        public Guid Usernameid { get; set; }
+        public string Usernameid { get; set; }
 
         [Required]
         public Guid Reviewid { get; set; }
@@ -29,7 +29,7 @@ namespace Models
             
         }
 
-        public ReviewDto(string movieid, Guid userid, double rating, string review,Guid reviewid,DateTime creationTime)
+        public ReviewDto(string movieid, string userid, double rating, string review,Guid reviewid,DateTime creationTime)
         {
             Imdbid = movieid;
             Usernameid = userid;

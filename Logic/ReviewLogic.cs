@@ -39,7 +39,7 @@ namespace Logic
             return reviews;
         }
 
-        public async Task<List<ReviewDto>> GetReviewsByUser(Guid userId)
+        public async Task<List<ReviewDto>> GetReviewsByUser(string userId)
         {
             List<ReviewDto> revDto = new List<ReviewDto>();
 

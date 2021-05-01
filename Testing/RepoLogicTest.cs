@@ -21,8 +21,8 @@ namespace Testing
         public async Task ListOfReviewsByImdb()
         {
             List<Review> reviews = new List<Review>();
-            var review3 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
-            var review4 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now,ImdbId = "12345",Score = 5};
+            var review3 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = "Anis",CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
+            var review4 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now,ImdbId = "12345",Score = 5};
             
             reviews.Add(review3);
             reviews.Add(review4);
@@ -51,8 +51,8 @@ namespace Testing
         public async Task ListOfReviewsDtoByImdb()
         {
             List<Review> reviews = new List<Review>();
-            var review3 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
-            var review4 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now,ImdbId = "12345",Score = 5};
+            var review3 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid().ToString(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
+            var review4 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now,ImdbId = "12345",Score = 5};
             
             reviews.Add(review3);
             reviews.Add(review4);
@@ -89,7 +89,7 @@ namespace Testing
         [Fact]
         public async Task AddReviewtest()
         {
-            var review = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
+            var review = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid().ToString(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
 
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
@@ -141,7 +141,7 @@ namespace Testing
         [Fact] 
         public async Task SetSettingTestNotHappyPath()
         {
-            var review = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
+            var review = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid().ToString(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
 
 
             bool result;
@@ -208,7 +208,7 @@ namespace Testing
         [Fact]
         public async Task GetallMovieByUserId()
         {
-            var id = Guid.NewGuid();
+            var id = Guid.NewGuid().ToString();
             List<Review> reviews = new List<Review>();
             var review3 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = id,CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
             var review4 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = id, CreationTime = DateTime.Now,ImdbId = "12345",Score = 5};
@@ -301,18 +301,18 @@ namespace Testing
             List<Review> reviews = new List<Review>();
             var review3 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345",
                 Score = 4
             };
             var review2 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345",
                 Score = 4
             };
 
             var review4 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345",
                 Score = 5
             };
 
@@ -348,18 +348,18 @@ namespace Testing
         {
             var review3 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345",
                 Score = 4
             };
             var review2 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345",
                 Score = 4
             };
 
             var review4 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345",
                 Score = 5
             };
 
@@ -394,18 +394,18 @@ namespace Testing
         {
             var review1 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345",
                 Score = 4
             };
             var review2 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345",
                 Score = 4
             };
 
             var review3 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345",
                 Score = 5
             };
             List<Guid> idGuids = new List<Guid>();

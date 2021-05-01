@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Models;
 using Logic.Interfaces;
+using Newtonsoft.Json;
 using Repository.Models;
+using RestSharp;
+using ReviewApi.AuthenticationHelper;
 
 namespace ReviewApi.Controllers
 {
@@ -39,8 +42,13 @@ namespace ReviewApi.Controllers
         /// <returns></returns>
 
         [HttpGet("ByUserId/{userId}")]
-        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByUserId(Guid userId)
+        
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByUserId(string userId)
         {
+            //var response = await Helper.Sendrequest("/userdata", Method.GET, Helper.GetTokenFromRequest(this.Request));
+            //Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content);
+            //var userid = dictionary["sub"];
+
             List<ReviewDto> revDto = await _reviewLogic.GetReviewsByUser(userId);
             if (revDto == null)
             {
