@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Models;
 using Logic.Interfaces;
 using Repository.Models;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 
 namespace ReviewApi.Controllers
 {
@@ -160,11 +163,11 @@ namespace ReviewApi.Controllers
             HttpResponseMessage response = await client.PostAsJsonAsync(path, reviewNotification);
             if(response.IsSuccessStatusCode)
             {   
-                return true;
+                return StatusCode(200);
             }
             else
             {
-                return false;
+                return StatusCode(400);
             }
          
         }
