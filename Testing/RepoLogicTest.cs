@@ -83,7 +83,7 @@ namespace Testing
                     result2.Add(ReviewMapper.RepoReviewToReview(review));
                 }
             }
-            Assert.Equal(result2,result1);
+            Assert.Equal(result2.Count,result1.Count);
         }
 
         [Fact]
@@ -439,5 +439,6 @@ namespace Testing
 
             Assert.Equal(result2.Count, result1.Count);
         }
+
     }
 }
