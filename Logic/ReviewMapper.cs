@@ -47,7 +47,7 @@ namespace Logic
         public static ReviewNotification ReviewToReviewNotification(ReviewDto reviewDto)
         {
             var reviewNotification = new ReviewNotification();
-            reviewNotification.Usernameid = reviewDto.Usernameid;
+            reviewNotification.Usernameid = reviewDto.Usernameid.ToString();
             reviewNotification.Imdbid = reviewDto.Imdbid;
             reviewNotification.Reviewid = reviewDto.Reviewid;
 

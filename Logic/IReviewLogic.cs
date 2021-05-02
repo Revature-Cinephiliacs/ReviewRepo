@@ -97,5 +97,12 @@ namespace Logic.Interfaces
         /// <returns></returns>
         Task<List<ReviewDto>> GetReviewsByIDS(List<string> ids);
 
+        /// <summary>
+        /// Gets a ReviewDto from ReviewController and passes it into the ReviewMapper
+        /// to get back a ReviewNotification that matches the ReviewDto.
+        /// </summary>
+        /// <param name="reviewDto"></param>
+        /// <returns></returns>
+        ReviewNotification GetReviewNotification(ReviewDto reviewDto);
     }
 }
