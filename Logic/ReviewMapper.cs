@@ -37,5 +37,21 @@ namespace Logic
 
             return repoReview;
         }
+
+        /// <summary>
+        /// Maps an instance of GlobalModels.ReviewDto onto a new instance of
+        /// GlobalModels.ReviewNotification.
+        /// </summary>
+        /// <param name="reviewDto"></param>
+        /// <returns></returns>
+        public static ReviewNotification ReviewToReviewNotification(ReviewDto reviewDto)
+        {
+            var reviewNotification = new ReviewNotification();
+            reviewNotification.Usernameid = reviewDto.Usernameid.ToString();
+            reviewNotification.Imdbid = reviewDto.Imdbid;
+            reviewNotification.Reviewid = reviewDto.Reviewid;
+
+            return reviewNotification;
+        }
     }
 }
