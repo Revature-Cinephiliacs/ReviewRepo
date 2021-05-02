@@ -51,9 +51,8 @@ namespace ReviewApi.AuthenticationHelper
         /// <returns>The response of the request</returns>
         public async static Task<IRestResponse> Sendrequest(string urlExtension, Method method, string token)
         {
-            // System.Console.WriteLine("baseUrl+urlExtension");
-            // System.Console.WriteLine("baseUrl" + urlExtension);
-            var client = new RestClient("https://localhost:5001/Authentication" + urlExtension);
+            const string baseUrl = "https://localhost:5001/Authentication";
+            var client = new RestClient(baseUrl + urlExtension);
             client.Timeout = -1;
             var request = new RestRequest(method);
             request.AddHeader("Content-Type", "application/json");

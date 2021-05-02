@@ -137,9 +137,7 @@ namespace Logic
                 return false;
             }
 
-            Setting setting = new Setting();
-            setting.Setting1 = "reviewspagesize";
-            setting.IntValue = pagesize;
+            Setting setting = new Setting {Setting1 = "reviewspagesize", IntValue = pagesize};
             return await _repo.SetSetting(setting);
         }
 
