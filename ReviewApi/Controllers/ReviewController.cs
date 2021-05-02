@@ -153,10 +153,20 @@ namespace ReviewApi.Controllers
         /// </summary>
         /// <param name="reviewNotification"></param>
         /// <returns></returns>
-        [HttpPost("Movie/review/notification")]
         public async Task<ActionResult<ReviewNotification>> SendNotification(ReviewNotification reviewNotification)
         {
-            return reviewNotification;
+            HttpClient client = new HttpClient();
+            string path = "http://20.94.153.81/movie/review/notification";
+            HttpResponseMessage response = await client.PostAsJsonAsync(path, reviewNotification);
+            if(response.IsSuccessStatusCode)
+            {   
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+         
         }
 
         /// <summary>
