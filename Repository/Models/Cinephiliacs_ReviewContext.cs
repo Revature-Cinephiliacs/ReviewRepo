@@ -54,7 +54,9 @@ namespace Repository.Models
 
                 entity.Property(e => e.Score).HasColumnName("score");
 
-                entity.Property(e => e.UsernameId).HasColumnName("usernameId");
+                entity.Property(e => e.UsernameId)
+                    .HasMaxLength(50)
+                    .HasColumnName("usernameId");
             });
 
             modelBuilder.Entity<Setting>(entity =>

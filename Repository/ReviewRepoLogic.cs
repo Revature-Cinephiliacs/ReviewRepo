@@ -114,7 +114,7 @@ namespace Repository
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<List<Review>> getListofReviewsByUser(Guid userId)
+        public async Task<List<Review>> getListofReviewsByUser(string userId)
         {
             return await _dbContext.Reviews.Where(r => r.UsernameId == userId).ToListAsync();
         }
