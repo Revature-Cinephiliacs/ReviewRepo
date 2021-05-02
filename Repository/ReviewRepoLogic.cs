@@ -164,7 +164,7 @@ namespace Repository
         /// <returns></returns>
         public async Task<List<Review>> getAllReviewByRating(string imdb, int rating)
         {
-            return await _dbContext.Reviews.Where(r => r.Score == rating && r.ImdbId == imdb).ToListAsync();
+            return await _dbContext.Reviews.Where(r => (r.Score >= rating) && (r.Score <= (rating + 0.5)) && r.ImdbId == imdb).ToListAsync();
         }
         /// <summary>
         /// an admin tool to delete a review if necessary
