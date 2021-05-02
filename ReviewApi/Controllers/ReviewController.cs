@@ -8,8 +8,12 @@ using Models;
 using Logic.Interfaces;
 using Newtonsoft.Json;
 using Repository.Models;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 using RestSharp;
 using ReviewApi.AuthenticationHelper;
+
 
 namespace ReviewApi.Controllers
 {
@@ -157,11 +161,11 @@ namespace ReviewApi.Controllers
             HttpResponseMessage response = await client.PostAsJsonAsync(path, reviewNotification);
             if(response.IsSuccessStatusCode)
             {   
-                return true;
+                return StatusCode(200);
             }
             else
             {
-                return false;
+                return StatusCode(400);
             }
          
         }
