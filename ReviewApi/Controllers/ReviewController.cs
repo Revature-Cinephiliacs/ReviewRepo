@@ -138,7 +138,7 @@ namespace ReviewApi.Controllers
             if(await _reviewLogic.CreateReview(reviewDto))
             {
                 ReviewNotification reviewNotification = _reviewLogic.GetReviewNotification(reviewDto);
-                SendNotification(reviewNotification)
+                SendNotification(reviewNotification);
                 return StatusCode(201);
             }
             
@@ -153,6 +153,7 @@ namespace ReviewApi.Controllers
         /// </summary>
         /// <param name="reviewNotification"></param>
         /// <returns></returns>
+        [HttpPost("Movie/review/notification")]
         public async Task<ActionResult<ReviewNotification>> SendNotification(ReviewNotification reviewNotification)
         {
             return reviewNotification;
