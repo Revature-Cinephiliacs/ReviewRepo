@@ -28,11 +28,11 @@ namespace Repository
         /// <returns></returns>
         public async Task<bool> AddReview(Review repoReview)
         {
-            // If the User has already reviewed this movie, update it
-            Review review = await _dbContext.Reviews.Where(r => 
+            //If the User has already reviewed this movie, update it
+            Review review = await _dbContext.Reviews.Where(r =>
                     r.UsernameId == repoReview.UsernameId
                     && r.ImdbId == repoReview.ImdbId).FirstOrDefaultAsync();
-            if(review == null)
+            if (review == null)
             {
                 await _dbContext.Reviews.AddAsync(repoReview);
             }
@@ -40,6 +40,7 @@ namespace Repository
             {
                 review.Score = repoReview.Score;
                 review.Review1 = repoReview.Review1;
+              
             }
             await _dbContext.SaveChangesAsync();
             return true;

@@ -87,7 +87,7 @@ namespace Testing
         }
 
         [Fact]
-        public async Task AddReviewtest()
+        public void AddReviewTest()
         {
             var review = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid().ToString(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
 
@@ -141,9 +141,6 @@ namespace Testing
         [Fact] 
         public async Task SetSettingTestNotHappyPath()
         {
-            var review = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid().ToString(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
-
-
             bool result;
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
@@ -159,16 +156,15 @@ namespace Testing
         {
             var setting = new Setting() { SettingId = Guid.NewGuid(),Setting1 = "Anis",IntValue = 54,StringValue = "Medini"};
 
-            var result1 = new Setting();
+            
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context1.Database.EnsureDeleted();
                 context1.Database.EnsureCreated();
                 context1.Settings.Add(setting);
                 
-                context1.SaveChanges(); 
-               result1 = await context1.Settings.Where(r => r.Setting1 == setting.Setting1).FirstOrDefaultAsync();
-               
+                context1.SaveChanges();
+
             }
 
             bool result;
