@@ -25,7 +25,7 @@ namespace Logic
         public async Task<List<ReviewDto>> GetReviews(string movieid)
         {
             var repoReviews = await _repo.GetMovieReviews(movieid);
-            if(repoReviews == null)
+            if(repoReviews == null || repoReviews.Count == 0)
             {
                 Console.WriteLine("MovieLogic.GetReviews() was called for a movie that doesn't exist.");
                 return null;
@@ -39,12 +39,12 @@ namespace Logic
             return reviews;
         }
 
-        public async Task<List<ReviewDto>> GetReviewsByUser(Guid userId)
+        public async Task<List<ReviewDto>> GetReviewsByUser(string userId)
         {
             List<ReviewDto> revDto = new List<ReviewDto>();
 
             List<Review> reviews = await _repo.getListofReviewsByUser(userId);
-            if (reviews == null )
+            if (reviews == null || reviews.Count == 0 )
             {
                 return null;
             }
@@ -82,7 +82,7 @@ namespace Logic
 
             List<Review> repoReviews = await _repo.GetMovieReviews(movieid);
 
-            if(repoReviews == null)
+            if(repoReviews == null || repoReviews.Count ==0)
             {
                 Console.WriteLine("ReviewLogic.GetReviewsPage() was called for a movie that doesn't exist.");
                 return null;
@@ -164,7 +164,7 @@ namespace Logic
             List<ReviewDto> revDto = new List<ReviewDto>();
 
             List<Review> reviews = await _repo.getAllReviewByRating(rating);
-            if (reviews == null )
+            if (reviews == null || reviews.Count == 0 )
             {
                 return null;
             }
@@ -182,7 +182,7 @@ namespace Logic
             List<ReviewDto> revDto = new List<ReviewDto>();
 
             List<Review> reviews = await _repo.getAllReviewByRating(imdb,rating);
-            if (reviews == null )
+            if (reviews == null || reviews.Count == 0 )
             {
                 return null;
             }

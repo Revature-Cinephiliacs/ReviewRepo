@@ -6,10 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Models;
 using Logic.Interfaces;
+using Newtonsoft.Json;
 using Repository.Models;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using RestSharp;
+using ReviewApi.AuthenticationHelper;
+
 
 namespace ReviewApi.Controllers
 {
@@ -24,16 +28,6 @@ namespace ReviewApi.Controllers
         }
 
         /// <summary>
-        /// Example for using authentication
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("users")]
-        [Authorize]
-        public async Task<ActionResult<string>> GetExample()
-        {
-            return Ok(new { response = "success" });
-        }
-        /// <summary>
         /// return a list of reviews depending on specific user stored in the DB
         /// if the user exist but no review it will throw a no content status code
         /// if the user doesn't exist it'll throw 404 not found
@@ -41,10 +35,10 @@ namespace ReviewApi.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
 
-        [HttpGet("ByUserId/{userId}")]
-        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByUserId(Guid userId)
+        [HttpGet("ByUserId/{userid}")]
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByUserId(string userid)
         {
-            List<ReviewDto> revDto = await _reviewLogic.GetReviewsByUser(userId);
+            List<ReviewDto> revDto = await _reviewLogic.GetReviewsByUser(userid);
             if (revDto == null)
             {
                 return StatusCode(404);
@@ -57,7 +51,7 @@ namespace ReviewApi.Controllers
             StatusCode(200);
             return revDto;
         }
-
+        
         /// <summary>
         /// Returns a list of all ReviewDto objects for the specified movie ID.
         /// </summary>
@@ -130,15 +124,20 @@ namespace ReviewApi.Controllers
         /// <param name="reviewDto"></param>
         /// <returns></returns>
         [HttpPost("reviewDto")]
+        [Authorize]
         public async Task<ActionResult> CreateReview([FromBody] ReviewDto reviewDto)
         {
-            if(!ModelState.IsValid)
+            var response = await Helper.Sendrequest("/userdata", Method.GET, Helper.GetTokenFromRequest(this.Request));
+            Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content);
+            var userid = dictionary["sub"];
+
+            if (!ModelState.IsValid)
             {
                 Console.WriteLine("ReviewController.CreateReview() was called with invalid body data.");
                 return StatusCode(400);
             }
 
-            if(await _reviewLogic.CreateReview(reviewDto))
+            if(reviewDto.Usernameid == userid && await _reviewLogic.CreateReview(reviewDto) )
             {
                 ReviewNotification reviewNotification = _reviewLogic.GetReviewNotification(reviewDto);
                 SendNotification(reviewNotification);
@@ -146,7 +145,6 @@ namespace ReviewApi.Controllers
             }
             
             return StatusCode(400);
-            
         }
 
         /// <summary>
@@ -179,20 +177,35 @@ namespace ReviewApi.Controllers
         /// <param name="reviewId"></param>
         /// <param name="reviewDto"></param>
         /// <returns></returns>
-        [HttpPatch("update/{reviewId}")]
-        public async Task<ActionResult> updateMovie(Guid reviewId,Review reviewDto)
+        [HttpPut("update/admin/{reviewId}")]
+        [Authorize("manage:awebsite")]
+        public async Task<ActionResult> updateMovieAdmin(Guid reviewId,Review reviewDto)
         {
             var reviewExist = await _reviewLogic.getOneReview(reviewId);
-
             if (reviewExist != null)
             {
                 reviewDto.ReviewId = reviewExist.ReviewId;
                 _reviewLogic.UpdatedRev(reviewDto);
                 return  StatusCode(200);
             }
-
             return  StatusCode(404);
+        }
+        [HttpPut("update/user/{reviewId}")]
+        [Authorize]
+        public async Task<ActionResult> updateMovieUser(Guid reviewId,Review reviewDto)
+        {
+            var response = await Helper.Sendrequest("/userdata", Method.GET, Helper.GetTokenFromRequest(this.Request));
+            Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content);
+            var userid = dictionary["sub"];
 
+            var reviewExist = await _reviewLogic.getOneReview(reviewId);
+            if (reviewDto.UsernameId == userid && reviewExist != null)
+            {
+                reviewDto.ReviewId = reviewExist.ReviewId;
+                _reviewLogic.UpdatedRev(reviewDto);
+                return  StatusCode(200);
+            }
+            return  StatusCode(404);
         }
         /// <summary>
         /// delete a review by a specific reviewId
@@ -200,11 +213,30 @@ namespace ReviewApi.Controllers
         /// </summary>
         /// <param name="reviewId"></param>
         /// <returns></returns>
-        [HttpDelete("delete/{reviewId}")]
-        public async Task<ActionResult> deleteRev(Guid reviewId)
+        [HttpDelete("deleteRev/admin/{reviewId}")]
+        [Authorize("manage:awebsite")]
+        public async Task<ActionResult> deleteRevAdmin(Guid reviewId)
         {
             var rev = await _reviewLogic.getOneReview(reviewId);
             if (rev != null)
+            {
+                _reviewLogic.deleteReview(rev);
+                return  StatusCode(200);
+            }
+
+            return StatusCode(404);
+        }
+        [HttpDelete("deleteRev/user/{reviewId}")]
+        [Authorize]
+        public async Task<ActionResult> deleteRev(Guid reviewId)
+        {
+            var response = await Helper.Sendrequest("/userdata", Method.GET, Helper.GetTokenFromRequest(this.Request));
+            Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content);
+            var userid = dictionary["sub"];
+
+
+            var rev = await _reviewLogic.getOneReview(reviewId);
+            if (rev.UsernameId == userid && rev != null)
             {
                 _reviewLogic.deleteReview(rev);
                 return  StatusCode(200);
