@@ -58,5 +58,18 @@ namespace Testing
             var actual = review.Imdbid;
             Assert.Equal(expected,actual);
         }
+
+        [Fact]
+        public void TestReviewNotification()
+        {
+            var reviewNotification = new ReviewNotification()
+            {
+                Imdbid = "Anis",
+                Usernameid = "AlsoAnis"
+            };
+            var expected = "Anis";
+            var actual = reviewNotification.Imdbid;
+            Assert.Equal(expected, actual);
+        }
     }
 }

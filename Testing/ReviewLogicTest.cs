@@ -536,5 +536,14 @@ namespace Testing
 
             Assert.Equal(result2.Count, result1.Count);
         }
+
+        [Fact]
+        public async void TestSendNotification()
+        {
+            ReviewLogic reviewLogic = new ReviewLogic(new ReviewRepoLogic(new Cinephiliacs_ReviewContext(dbOptions)));
+            var expected = false;
+            var actual = await reviewLogic.SendNotification(new ReviewNotification());
+            Assert.Equal(expected, actual);
+        }
     }
 }
