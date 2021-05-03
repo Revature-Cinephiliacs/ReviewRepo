@@ -32,7 +32,7 @@ namespace Logic.Interfaces
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<List<ReviewDto>> GetReviewsByUser(Guid userId);
+        Task<List<ReviewDto>> GetReviewsByUser(string userId);
 
         /// <summary>
         /// Returns ReviewDto objects [n*(page-1), n*(page-1) + n] whose MovieId
@@ -97,5 +97,21 @@ namespace Logic.Interfaces
         /// <returns></returns>
         Task<List<ReviewDto>> GetReviewsByIDS(List<string> ids);
 
+        /// <summary>
+        /// Gets a ReviewDto from ReviewController and passes it into the ReviewMapper
+        /// to get back a ReviewNotification that matches the ReviewDto.
+        /// </summary>
+        /// <param name="reviewDto"></param>
+        /// <returns></returns>
+        ReviewNotification GetReviewNotification(ReviewDto reviewDto);
+
+        /// <summary>
+        /// When CreateReview is called successfully, it will trigger this method to send a notification
+        /// to Movies to get a list of userids who follow the movie associated with the imdbid contained
+        /// in the notification.
+        /// </summary>
+        /// <param name="reviewNotification"></param>
+        /// <returns></returns>
+        Task<bool> SendNotification(ReviewNotification reviewNotification);
     }
 }

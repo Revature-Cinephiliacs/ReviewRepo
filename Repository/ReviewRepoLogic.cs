@@ -28,11 +28,11 @@ namespace Repository
         /// <returns></returns>
         public async Task<bool> AddReview(Review repoReview)
         {
-            // If the User has already reviewed this movie, update it
-            Review review = await _dbContext.Reviews.Where(r => 
+            //If the User has already reviewed this movie, update it
+            Review review = await _dbContext.Reviews.Where(r =>
                     r.UsernameId == repoReview.UsernameId
                     && r.ImdbId == repoReview.ImdbId).FirstOrDefaultAsync();
-            if(review == null)
+            if (review == null)
             {
                 await _dbContext.Reviews.AddAsync(repoReview);
             }
@@ -40,6 +40,7 @@ namespace Repository
             {
                 review.Score = repoReview.Score;
                 review.Review1 = repoReview.Review1;
+              
             }
             await _dbContext.SaveChangesAsync();
             return true;
@@ -114,7 +115,7 @@ namespace Repository
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<List<Review>> getListofReviewsByUser(Guid userId)
+        public async Task<List<Review>> getListofReviewsByUser(string userId)
         {
             return await _dbContext.Reviews.Where(r => r.UsernameId == userId).ToListAsync();
         }
@@ -163,7 +164,7 @@ namespace Repository
         /// <returns></returns>
         public async Task<List<Review>> getAllReviewByRating(string imdb, int rating)
         {
-            return await _dbContext.Reviews.Where(r => r.Score == rating && r.ImdbId == imdb).ToListAsync();
+            return await _dbContext.Reviews.Where(r => (r.Score >= rating) && (r.Score <= (rating + 0.5)) && r.ImdbId == imdb).ToListAsync();
         }
         /// <summary>
         /// an admin tool to delete a review if necessary

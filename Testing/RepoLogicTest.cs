@@ -21,13 +21,13 @@ namespace Testing
         public async Task ListOfReviewsByImdb()
         {
             List<Review> reviews = new List<Review>();
-            var review3 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
-            var review4 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now,ImdbId = "12345",Score = 5};
-            
+            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = "Anis", CreationTime = DateTime.Now, ImdbId = "12345", Score = 54 };
+            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345", Score = 5 };
+
             reviews.Add(review3);
             reviews.Add(review4);
 
-            List<Review> result1; 
+            List<Review> result1;
 
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
@@ -38,26 +38,26 @@ namespace Testing
                 context1.SaveChanges();
                 result1 = await context1.Reviews.Where(r => r.ImdbId == "12345").ToListAsync();
             }
-            List<Review> result2; 
+            List<Review> result2;
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context2.Database.EnsureCreated();
                 var msr = new ReviewRepoLogic(context2);
                 result2 = await msr.GetMovieReviews("12345");
             }
-            Assert.Equal(result2.Count,result1.Count);
+            Assert.Equal(result2.Count, result1.Count);
         }
         [Fact]
         public async Task ListOfReviewsDtoByImdb()
         {
             List<Review> reviews = new List<Review>();
-            var review3 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
-            var review4 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now,ImdbId = "12345",Score = 5};
-            
+            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345", Score = 54 };
+            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345", Score = 5 };
+
             reviews.Add(review3);
             reviews.Add(review4);
 
-            List<ReviewDto> result1 = new List<ReviewDto>(); 
+            List<ReviewDto> result1 = new List<ReviewDto>();
 
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
@@ -69,10 +69,10 @@ namespace Testing
                 List<Review> reviewsResult = await context1.Reviews.Where(r => r.ImdbId == "12345").ToListAsync();
                 foreach (var review in reviewsResult)
                 {
-                    result1.Add(ReviewMapper.RepoReviewToReview(review));
+                    result1.Add(await ReviewMapper.RepoReviewToReviewAsync(review));
                 }
             }
-            List<ReviewDto> result2 = new List<ReviewDto>(); 
+            List<ReviewDto> result2 = new List<ReviewDto>();
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context2.Database.EnsureCreated();
@@ -80,16 +80,16 @@ namespace Testing
                 List<Review> reviewsResult = await msr.GetMovieReviews("12345");
                 foreach (var review in reviewsResult)
                 {
-                    result2.Add(ReviewMapper.RepoReviewToReview(review));
+                    result2.Add(await ReviewMapper.RepoReviewToReviewAsync(review));
                 }
             }
-            Assert.Equal(result2,result1);
+            Assert.Equal(result2.Count, result1.Count);
         }
 
         [Fact]
-        public async Task AddReviewtest()
+        public void AddReviewTest()
         {
-            var review = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
+            var review = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345", Score = 54 };
 
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
@@ -105,7 +105,7 @@ namespace Testing
             {
                 context2.Database.EnsureCreated();
                 var msr = new ReviewRepoLogic(context2);
-                result= msr.AddReview(review).Result;
+                result = msr.AddReview(review).Result;
 
             }
             Assert.True(result);
@@ -114,7 +114,7 @@ namespace Testing
         [Fact]
         public async Task SettingTest()
         {
-            var setting = new Setting(){Setting1 = "Anis",IntValue = 34,StringValue = "Medini"};
+            var setting = new Setting() { Setting1 = "Anis", IntValue = 34, StringValue = "Medini" };
 
             Setting result1;
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
@@ -122,10 +122,10 @@ namespace Testing
                 context1.Database.EnsureDeleted();
                 context1.Database.EnsureCreated();
                 context1.Settings.Add(setting);
-                
+
                 context1.SaveChanges();
                 result1 = await context1.Settings.Where(r => r.Setting1 == setting.Setting1).FirstOrDefaultAsync();
-               
+
             }
             Setting result2;
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
@@ -133,17 +133,14 @@ namespace Testing
                 context2.Database.EnsureCreated();
                 var msr = new ReviewRepoLogic(context2);
                 result2 = msr.GetSetting(setting.Setting1);
-               
+
             }
-            Assert.Equal(result2.StringValue,result1.StringValue);
+            Assert.Equal(result2.StringValue, result1.StringValue);
         }
 
-        [Fact] 
+        [Fact]
         public async Task SetSettingTestNotHappyPath()
         {
-            var review = new Review() { ReviewId = Guid.NewGuid(),UsernameId = Guid.NewGuid(),CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
-
-
             bool result;
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
@@ -154,21 +151,20 @@ namespace Testing
             }
             Assert.False(result);
         }
-        [Fact] 
+        [Fact]
         public async Task SetSettingTestHappyPath()
         {
-            var setting = new Setting() { SettingId = Guid.NewGuid(),Setting1 = "Anis",IntValue = 54,StringValue = "Medini"};
+            var setting = new Setting() { SettingId = Guid.NewGuid(), Setting1 = "Anis", IntValue = 54, StringValue = "Medini" };
 
-            var result1 = new Setting();
+
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context1.Database.EnsureDeleted();
                 context1.Database.EnsureCreated();
                 context1.Settings.Add(setting);
-                
-                context1.SaveChanges(); 
-               result1 = await context1.Settings.Where(r => r.Setting1 == setting.Setting1).FirstOrDefaultAsync();
-               
+
+                context1.SaveChanges();
+
             }
 
             bool result;
@@ -182,10 +178,10 @@ namespace Testing
             Assert.True(result);
         }
 
-        [Fact] 
+        [Fact]
         public void SetSettingExistTest()
         {
-            var setting = new Setting() { SettingId = Guid.NewGuid(),Setting1 = "Anis",IntValue = 54,StringValue = "Medini"};
+            var setting = new Setting() { SettingId = Guid.NewGuid(), Setting1 = "Anis", IntValue = 54, StringValue = "Medini" };
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context1.Database.EnsureDeleted();
@@ -208,14 +204,14 @@ namespace Testing
         [Fact]
         public async Task GetallMovieByUserId()
         {
-            var id = Guid.NewGuid();
+            var id = Guid.NewGuid().ToString();
             List<Review> reviews = new List<Review>();
-            var review3 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = id,CreationTime = DateTime.Now,ImdbId = "12345",Score = 54};
-            var review4 = new Review() { ReviewId = Guid.NewGuid(),UsernameId = id, CreationTime = DateTime.Now,ImdbId = "12345",Score = 5};
+            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = id, CreationTime = DateTime.Now, ImdbId = "12345", Score = 54 };
+            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = id, CreationTime = DateTime.Now, ImdbId = "12345", Score = 5 };
             reviews.Add(review3);
             reviews.Add(review4);
 
-            List<ReviewDto> result1 = new List<ReviewDto>(); 
+            List<ReviewDto> result1 = new List<ReviewDto>();
 
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
@@ -227,10 +223,10 @@ namespace Testing
                 List<Review> reviewsResult = await context1.Reviews.Where(r => r.UsernameId == id).ToListAsync();
                 foreach (var review in reviewsResult)
                 {
-                    result1.Add(ReviewMapper.RepoReviewToReview(review));
+                    result1.Add(await ReviewMapper.RepoReviewToReviewAsync(review));
                 }
             }
-            List<ReviewDto> result2 = new List<ReviewDto>(); 
+            List<ReviewDto> result2 = new List<ReviewDto>();
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context2.Database.EnsureCreated();
@@ -238,16 +234,16 @@ namespace Testing
                 List<Review> reviewsResult = await msr.getListofReviewsByUser(id);
                 foreach (var review in reviewsResult)
                 {
-                    result2.Add(ReviewMapper.RepoReviewToReview(review));
+                    result2.Add(await ReviewMapper.RepoReviewToReviewAsync(review));
                 }
             }
-            Assert.Equal(result2.Count,result1.Count);
+            Assert.Equal(result2.Count, result1.Count);
         }
 
         [Fact]
         public void TestDelete()
         {
-            var review = new Review() {ReviewId = Guid.NewGuid(), Review1 = "Some stuff"};
+            var review = new Review() { ReviewId = Guid.NewGuid(), Review1 = "Some stuff" };
 
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
@@ -264,15 +260,15 @@ namespace Testing
                 context2.Database.EnsureCreated();
                 var msr = new ReviewRepoLogic(context2);
                 msr.deleteReview(review);
-                result =  msr.getSingleReview(review.ReviewId).Result;
+                result = msr.getSingleReview(review.ReviewId).Result;
             }
-            Assert.NotEqual(review,result);
+            Assert.NotEqual(review, result);
         }
 
         [Fact]
         public void TestUpdateReview()
         {
-            var review = new Review() {ReviewId = Guid.NewGuid(), Review1 = "Some stuff"};
+            var review = new Review() { ReviewId = Guid.NewGuid(), Review1 = "Some stuff" };
 
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
@@ -288,11 +284,11 @@ namespace Testing
             {
                 context2.Database.EnsureCreated();
                 var msr = new ReviewRepoLogic(context2);
-                result =  msr.getSingleReview(review.ReviewId).Result;
+                result = msr.getSingleReview(review.ReviewId).Result;
                 result.Review1 = "Other stuff";
                 msr.updateReview(result);
             }
-            Assert.NotEqual(result.Review1,review.Review1);
+            Assert.NotEqual(result.Review1, review.Review1);
         }
 
         [Fact]
@@ -301,18 +297,27 @@ namespace Testing
             List<Review> reviews = new List<Review>();
             var review3 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(),
+                UsernameId = Guid.NewGuid().ToString(),
+                CreationTime = DateTime.Now,
+                ImdbId = "12345",
                 Score = 4
             };
             var review2 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(),
+                UsernameId = Guid.NewGuid().ToString(),
+                CreationTime = DateTime.Now,
+                ImdbId = "12345",
                 Score = 4
             };
 
             var review4 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(),
+                UsernameId = Guid.NewGuid().ToString(),
+                CreationTime = DateTime.Now,
+                ImdbId = "12345",
                 Score = 5
             };
 
@@ -348,22 +353,31 @@ namespace Testing
         {
             var review3 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(),
+                UsernameId = Guid.NewGuid().ToString(),
+                CreationTime = DateTime.Now,
+                ImdbId = "12345",
                 Score = 4
             };
             var review2 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(),
+                UsernameId = Guid.NewGuid().ToString(),
+                CreationTime = DateTime.Now,
+                ImdbId = "12345",
                 Score = 4
             };
 
             var review4 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(),
+                UsernameId = Guid.NewGuid().ToString(),
+                CreationTime = DateTime.Now,
+                ImdbId = "12345",
                 Score = 5
             };
 
-           
+
 
             List<Review> result1;
 
@@ -383,7 +397,7 @@ namespace Testing
             {
                 context2.Database.EnsureCreated();
                 var msr = new ReviewRepoLogic(context2);
-                result2 = await msr.getAllReviewByRating("12345",5);
+                result2 = await msr.getAllReviewByRating("12345", 5);
             }
 
             Assert.Equal(result2.Count, result1.Count);
@@ -394,18 +408,27 @@ namespace Testing
         {
             var review1 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(),
+                UsernameId = Guid.NewGuid().ToString(),
+                CreationTime = DateTime.Now,
+                ImdbId = "12345",
                 Score = 4
             };
             var review2 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(),
+                UsernameId = Guid.NewGuid().ToString(),
+                CreationTime = DateTime.Now,
+                ImdbId = "12345",
                 Score = 4
             };
 
             var review3 = new Review()
             {
-                ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid(), CreationTime = DateTime.Now, ImdbId = "12345",
+                ReviewId = Guid.NewGuid(),
+                UsernameId = Guid.NewGuid().ToString(),
+                CreationTime = DateTime.Now,
+                ImdbId = "12345",
                 Score = 5
             };
             List<Guid> idGuids = new List<Guid>();
@@ -439,5 +462,6 @@ namespace Testing
 
             Assert.Equal(result2.Count, result1.Count);
         }
+
     }
 }

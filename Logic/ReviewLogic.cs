@@ -5,17 +5,27 @@ using System.Threading.Tasks;
 using Models;
 using Repository;
 using Repository.Models;
+using System.Net.Http;
+using Microsoft.Extensions.Logging;
+using System.Net.Http.Json;
 
 namespace Logic
 {
     public class ReviewLogic : Interfaces.IReviewLogic
     {
         private readonly ReviewRepoLogic _repo;
-        
+        private readonly ILogger<ReviewLogic> _logger;
+
         public ReviewLogic(ReviewRepoLogic repo)
         {
             _repo = repo;
         }
+        public ReviewLogic(ReviewRepoLogic repo,ILogger<ReviewLogic> logger)
+        {
+            _repo = repo;
+            _logger = logger;
+        }
+        public ReviewLogic() { }
 
         /// <summary>
         /// Returns a list of every ReviewDto object whose Movieid is equal to
@@ -25,33 +35,34 @@ namespace Logic
         public async Task<List<ReviewDto>> GetReviews(string movieid)
         {
             var repoReviews = await _repo.GetMovieReviews(movieid);
-            if(repoReviews == null)
+            if (repoReviews == null || repoReviews.Count == 0)
             {
-                Console.WriteLine("MovieLogic.GetReviews() was called for a movie that doesn't exist.");
+                _logger.LogInformation($"ReviewLogic.GetReviews() was called for a movie that doesn't exist {movieid}");
                 return null;
             }
 
             var reviews = new List<ReviewDto>();
             foreach (var repoReview in repoReviews)
             {
-                reviews.Add(ReviewMapper.RepoReviewToReview(repoReview));
+                reviews.Add(await ReviewMapper.RepoReviewToReviewAsync(repoReview));
             }
             return reviews;
         }
 
-        public async Task<List<ReviewDto>> GetReviewsByUser(Guid userId)
+        public async Task<List<ReviewDto>> GetReviewsByUser(string userId)
         {
             List<ReviewDto> revDto = new List<ReviewDto>();
 
             List<Review> reviews = await _repo.getListofReviewsByUser(userId);
-            if (reviews == null )
+            if (reviews == null)
             {
+                _logger.LogInformation($"MovieLogic.GetReviewsByUser() was called for a user that doesn't exist {userId}");
                 return null;
             }
 
             foreach (var rev in reviews)
             {
-                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+                revDto.Add(await ReviewMapper.RepoReviewToReviewAsync(rev));
             }
 
             return revDto;
@@ -66,25 +77,25 @@ namespace Logic
         /// </summary>
         public async Task<List<ReviewDto>> GetReviewsPage(string movieid, int page, string sortorder)
         {
-            if(page < 1)
+            if (page < 1)
             {
-                Console.WriteLine("ReviewLogic.GetReviewsPage() was called with a negative or zero page number.");
+                _logger.LogInformation($"ReviewLogic.GetReviewsPage() was called with a negative or zero page number {page}");
                 return null;
             }
 
             Setting pageSizeSetting = _repo.GetSetting("reviewspagesize");
             int pageSize = (int)pageSizeSetting.IntValue;
-            if(pageSize < 1)
+            if (pageSize < 1)
             {
-                Console.WriteLine("ReviewLogic.GetReviewsPage() was called but the reviewspagesize is invalid");
+                _logger.LogInformation($"ReviewLogic.GetReviewsPage() was called but the reviewspagesize is invalid {pageSize}");
                 return null;
             }
 
             List<Review> repoReviews = await _repo.GetMovieReviews(movieid);
 
-            if(repoReviews == null)
+            if (repoReviews == null || repoReviews.Count == 0)
             {
-                Console.WriteLine("ReviewLogic.GetReviewsPage() was called for a movie that doesn't exist.");
+                _logger.LogInformation($"ReviewLogic.GetReviewsPage() was called for a movie that doesn't exist {movieid}");
                 return null;
             }
 
@@ -92,16 +103,16 @@ namespace Logic
             {
                 case "ratingasc":
                     repoReviews = repoReviews.OrderBy(r => r.Score).ToList();
-                break;
+                    break;
                 case "ratingdsc":
                     repoReviews = repoReviews.OrderByDescending(r => r.Score).ToList();
-                break;
+                    break;
                 case "timeasc":
                     repoReviews = repoReviews.OrderBy(r => r.CreationTime).ToList();
-                break;
+                    break;
                 case "timedsc":
                     repoReviews = repoReviews.OrderByDescending(r => r.CreationTime).ToList();
-                break;
+                    break;
                 default:
                     return null;
             }
@@ -109,14 +120,14 @@ namespace Logic
             int numberOfReviews = repoReviews.Count;
             int startIndex = pageSize * (page - 1);
 
-            if(startIndex > numberOfReviews - 1)
+            if (startIndex > numberOfReviews - 1)
             {
-                Console.WriteLine("MovieLogic.GetReviewsPage() was called for a page number without reviews.");
+                _logger.LogInformation($"MovieLogic.GetReviewsPage() was called for a page number without reviews.");
                 return null;
             }
 
             int endIndex = startIndex + pageSize - 1;
-            if(endIndex > numberOfReviews - 1)
+            if (endIndex > numberOfReviews - 1)
             {
                 endIndex = numberOfReviews - 1;
             }
@@ -125,21 +136,20 @@ namespace Logic
 
             for (int i = startIndex; i <= endIndex; i++)
             {
-                reviews.Add(ReviewMapper.RepoReviewToReview(repoReviews[i]));
+                reviews.Add(await ReviewMapper.RepoReviewToReviewAsync(repoReviews[i]));
             }
             return reviews;
         }
 
         public async Task<bool> SetReviewsPageSize(int pagesize)
         {
-            if(pagesize < 1 || pagesize > 100)
+            if (pagesize < 1 || pagesize > 100)
             {
+                _logger.LogInformation($"MovieLogic.SetReviewsPage() was called for a invalid page size");
                 return false;
             }
 
-            Setting setting = new Setting();
-            setting.Setting1 = "reviewspagesize";
-            setting.IntValue = pagesize;
+            Setting setting = new Setting { Setting1 = "reviewspagesize", IntValue = pagesize };
             return await _repo.SetSetting(setting);
         }
 
@@ -164,32 +174,33 @@ namespace Logic
             List<ReviewDto> revDto = new List<ReviewDto>();
 
             List<Review> reviews = await _repo.getAllReviewByRating(rating);
-            if (reviews == null )
+            if (reviews == null || reviews.Count == 0)
             {
+                _logger.LogInformation($"MovieLogic.GetReviewsByRating() was called for rating that doesn't exist.");
                 return null;
             }
 
             foreach (var rev in reviews)
             {
-                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+                revDto.Add(await ReviewMapper.RepoReviewToReviewAsync(rev));
             }
 
             return revDto;
         }
 
-        public async Task<List<ReviewDto>> GetReviewsByRating(string imdb,int rating)
+        public async Task<List<ReviewDto>> GetReviewsByRating(string imdb, int rating)
         {
             List<ReviewDto> revDto = new List<ReviewDto>();
 
-            List<Review> reviews = await _repo.getAllReviewByRating(imdb,rating);
-            if (reviews == null )
+            List<Review> reviews = await _repo.getAllReviewByRating(imdb, rating);
+            if (reviews == null || reviews.Count == 0)
             {
+                _logger.LogInformation($"MovieLogic.GetReviewsByRatingAndIMdb() was called for rating and Imdb that doesn't exist.");
                 return null;
             }
-
             foreach (var rev in reviews)
             {
-                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+                revDto.Add(await ReviewMapper.RepoReviewToReviewAsync(rev));
             }
 
             return revDto;
@@ -202,12 +213,47 @@ namespace Logic
         public async Task<List<ReviewDto>> GetReviewsByIDS(List<string> ids)
         {
             List<ReviewDto> revDto = new List<ReviewDto>();
-            
+
             foreach (var rev in await _repo.getAllReviewsBYIDS(ids))
             {
-                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+                revDto.Add(await ReviewMapper.RepoReviewToReviewAsync(rev));
             }
             return revDto;
+        }
+
+        /// <summary>
+        /// Gets a ReviewDto from ReviewController and passes it into the ReviewMapper
+        /// to get back a ReviewNotification that matches the ReviewDto.
+        /// </summary>
+        /// <param name="reviewDto"></param>
+        /// <returns></returns>
+        public ReviewNotification GetReviewNotification(ReviewDto reviewDto)
+        {
+            var reviewNotification = ReviewMapper.ReviewToReviewNotification(reviewDto);
+            return reviewNotification;
+        }
+
+        /// <summary>
+        /// When CreateReview is called successfully, it will trigger this method to send a notification
+        /// to Movies to get a list of userids who follow the movie associated with the imdbid contained
+        /// in the notification.
+        /// </summary>
+        /// <param name="reviewNotification"></param>
+        /// <returns></returns>
+        public async Task<bool> SendNotification(ReviewNotification reviewNotification)
+        {
+            HttpClient client = new HttpClient();
+            string path = "http://20.94.153.81/movie/review/notification";
+            HttpResponseMessage response = await client.PostAsJsonAsync(path, reviewNotification);
+            if(response.IsSuccessStatusCode)
+            {   
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+         
         }
     }
 }
