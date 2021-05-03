@@ -104,5 +104,14 @@ namespace Logic.Interfaces
         /// <param name="reviewDto"></param>
         /// <returns></returns>
         ReviewNotification GetReviewNotification(ReviewDto reviewDto);
+
+        /// <summary>
+        /// When CreateReview is called successfully, it will trigger this method to send a notification
+        /// to Movies to get a list of userids who follow the movie associated with the imdbid contained
+        /// in the notification.
+        /// </summary>
+        /// <param name="reviewNotification"></param>
+        /// <returns></returns>
+        Task<bool> SendNotification(ReviewNotification reviewNotification);
     }
 }

@@ -140,34 +140,11 @@ namespace ReviewApi.Controllers
             if (reviewDto.Usernameid == userid && await _reviewLogic.CreateReview(reviewDto))
             {
                 ReviewNotification reviewNotification = _reviewLogic.GetReviewNotification(reviewDto);
-                SendNotification(reviewNotification);
+                _reviewLogic.SendNotification(reviewNotification);
                 return StatusCode(201);
             }
 
             return StatusCode(400);
-        }
-
-        /// <summary>
-        /// When CreateReview is called successfully, it will trigger this method to send a notification
-        /// to Movies to get a list of userids who follow the movie associated with the imdbid contained
-        /// in the notification.
-        /// </summary>
-        /// <param name="reviewNotification"></param>
-        /// <returns></returns>
-        public async Task<ActionResult<ReviewNotification>> SendNotification(ReviewNotification reviewNotification)
-        {
-            HttpClient client = new HttpClient();
-            string path = "http://20.94.153.81/movie/review/notification";
-            HttpResponseMessage response = await client.PostAsJsonAsync(path, reviewNotification);
-            if (response.IsSuccessStatusCode)
-            {
-                return StatusCode(200);
-            }
-            else
-            {
-                return StatusCode(400);
-            }
-
         }
 
         /// <summary>
