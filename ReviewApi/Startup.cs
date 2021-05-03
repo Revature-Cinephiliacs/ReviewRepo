@@ -38,17 +38,17 @@ namespace ReviewRepo
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
-                    builder =>
-                    {
-                        builder.WithOrigins(
-                            "http://20.94.137.143/", //Frontend
-                            "http://20.189.29.112/", //Admintools
-                            "http://20.45.2.119/", //User
-                            "http://localhost:4200/"
-                            )
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
+                                builder =>
+                                {
+                                    builder.WithOrigins(
+                                        "http://20.94.137.143/", //Frontend
+                                        "http://20.189.29.112/", //Admintools
+                                        "http://20.45.2.119/", //User
+                                        "http://localhost:4200/"
+                                        )
+                                       .AllowAnyHeader()
+                                       .AllowAnyMethod();
+                                });
             });
             var myConnectionString = Configuration.GetConnectionString("Cinephiliacs_Review");
             services.AddDbContext<Cinephiliacs_ReviewContext>(options =>
