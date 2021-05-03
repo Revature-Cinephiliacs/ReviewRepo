@@ -65,19 +65,13 @@ namespace Logic
         /// <returns></returns>
         public static async Task<string> GetUsernameFromAPI(string userid)
         {
-            System.Console.WriteLine("userid");
-            System.Console.WriteLine(userid);
             HttpClient client = new HttpClient();
-            string path = _userapi + userid;
+            string path = _userapi + "username/" + userid;
             HttpResponseMessage response = await client.GetAsync(path);
-            System.Console.WriteLine("reponse");
-            System.Console.WriteLine(response);
             if(response.IsSuccessStatusCode)
             {
                 string jsonContent = await response.Content.ReadAsStringAsync();
-                JObject json = JObject.Parse(jsonContent);
-                string username = json["username"].ToString();
-                return username;
+                return jsonContent;
             }
             else
             {

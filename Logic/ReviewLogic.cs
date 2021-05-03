@@ -7,7 +7,7 @@ using Repository;
 using Repository.Models;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
-
+using System.Net.Http.Json;
 
 namespace Logic
 {
