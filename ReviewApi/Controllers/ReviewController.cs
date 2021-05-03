@@ -265,25 +265,5 @@ namespace ReviewApi.Controllers
             StatusCode(200);
             return reviews;
         }
-        /// <summary>
-        /// return a list of reviews bases on a ReviewId List  (Admin tool)
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <returns></returns>
-        [HttpPost("reportedReviews")]
-        public async Task<ActionResult<List<ReviewDto>>> getListOfReviewsByIDS([FromBody] List<string> ids)
-        {
-            List<ReviewDto> revDto = await _reviewLogic.GetReviewsByIDS(ids);
-            if(revDto == null)
-            {
-                return StatusCode(404);
-            }
-            if (revDto.Count == 0)
-            {
-                return StatusCode(204);
-            }
-            StatusCode(200);
-            return revDto;
-        }
     }
 }
