@@ -32,7 +32,7 @@ namespace Logic.Interfaces
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<List<ReviewDto>> GetReviewsByUser(Guid userId);
+        Task<List<ReviewDto>> GetReviewsByUser(string userId);
 
         /// <summary>
         /// Returns ReviewDto objects [n*(page-1), n*(page-1) + n] whose MovieId

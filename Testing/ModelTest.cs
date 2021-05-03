@@ -17,7 +17,7 @@ namespace Testing
             var review = new Review()
             {
                 ReviewId = Guid.NewGuid(),
-                UsernameId = Guid.NewGuid(),
+                UsernameId = Guid.NewGuid().ToString(),
                 ImdbId = "Anis",
                 Score = 34,
                 Review1 = "Some reviews",
@@ -48,7 +48,7 @@ namespace Testing
             var review = new ReviewDto()
             {
                 Reviewid = Guid.NewGuid(),
-                Usernameid = Guid.NewGuid(),
+                Usernameid = Guid.NewGuid().ToString(),
                 Imdbid = "Anis",
                 Score = 34,
                 Review = "Some reviews",
