@@ -13,7 +13,7 @@ namespace Testing
     public class MapperTest
     {
         [Fact]
-        public void TestReviewToReviewDto()
+        public async Task TestReviewToReviewDto()
         {
             var review = new Review()
             {
@@ -24,15 +24,16 @@ namespace Testing
                 Review1 = "Some reviews",
                 CreationTime = DateTime.Now
             };
-          
-            var revDto =  ReviewMapper.RepoReviewToReview(review);
 
-            Assert.Equal(review.UsernameId,revDto.Usernameid);
+            var revDto = await ReviewMapper.RepoReviewToReviewAsync(review);
 
-        }   [Fact]
+            Assert.Equal(review.ImdbId, revDto.Imdbid);
+
+        }
+        [Fact]
         public void TestReviewDtoToReview()
         {
-         
+
             var reviewDto = new ReviewDto()
             {
                 Reviewid = Guid.NewGuid(),
@@ -42,9 +43,9 @@ namespace Testing
                 Review = "Some reviews",
                 CreationTime = DateTime.Now
             };
-            var revDto =  ReviewMapper.ReviewToRepoReview(reviewDto);
+            var revDto = ReviewMapper.ReviewToRepoReview(reviewDto);
 
-            Assert.Equal(reviewDto.Usernameid,revDto.UsernameId);
+            Assert.Equal(reviewDto.Usernameid, revDto.UsernameId);
 
         }
 

@@ -41,17 +41,17 @@ namespace ReviewApi.Controllers
             List<ReviewDto> revDto = await _reviewLogic.GetReviewsByUser(userid);
             if (revDto == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
-            if(revDto.Count == 0)
+            if (revDto.Count == 0)
             {
-                return  StatusCode(204);
+                return NoContent();
             }
 
             StatusCode(200);
             return revDto;
         }
-        
+
         /// <summary>
         /// Returns a list of all ReviewDto objects for the specified movie ID.
         /// </summary>
@@ -62,11 +62,11 @@ namespace ReviewApi.Controllers
         {
             List<ReviewDto> reviews = await _reviewLogic.GetReviews(movieid);
 
-            if(reviews == null)
+            if (reviews == null)
             {
                 return StatusCode(404);
             }
-            if(reviews.Count == 0)
+            if (reviews.Count == 0)
             {
                 return StatusCode(204);
             }
@@ -88,11 +88,11 @@ namespace ReviewApi.Controllers
         {
             List<ReviewDto> reviews = await _reviewLogic.GetReviewsPage(movieid, page, sortorder);
 
-            if(reviews == null)
+            if (reviews == null)
             {
                 return StatusCode(404);
             }
-            if(reviews.Count == 0)
+            if (reviews.Count == 0)
             {
                 return StatusCode(204);
             }
@@ -108,13 +108,13 @@ namespace ReviewApi.Controllers
         [HttpPost("page/{pagesize}")]
         public async Task<ActionResult> SetReviewsPageSize(int pagesize)
         {
-            if(await _reviewLogic.SetReviewsPageSize(pagesize))
+            if (await _reviewLogic.SetReviewsPageSize(pagesize))
             {
                 return StatusCode(201);
             }
-            
+
             return StatusCode(400);
-            
+
         }
 
         /// <summary>
@@ -137,16 +137,15 @@ namespace ReviewApi.Controllers
                 return StatusCode(400);
             }
 
-            if(reviewDto.Usernameid == userid && await _reviewLogic.CreateReview(reviewDto) )
+            if (reviewDto.Usernameid == userid && await _reviewLogic.CreateReview(reviewDto))
             {
                 ReviewNotification reviewNotification = _reviewLogic.GetReviewNotification(reviewDto);
                 _reviewLogic.SendNotification(reviewNotification);
                 return StatusCode(201);
             }
-            
+
             return StatusCode(400);
         }
-
 
         /// <summary>
         /// updates the reviews posted by the user
@@ -157,20 +156,20 @@ namespace ReviewApi.Controllers
         /// <returns></returns>
         [HttpPut("update/admin/{reviewId}")]
         [Authorize("manage:awebsite")]
-        public async Task<ActionResult> updateMovieAdmin(Guid reviewId,Review reviewDto)
+        public async Task<ActionResult> updateMovieAdmin(Guid reviewId, Review reviewDto)
         {
             var reviewExist = await _reviewLogic.getOneReview(reviewId);
             if (reviewExist != null)
             {
                 reviewDto.ReviewId = reviewExist.ReviewId;
                 _reviewLogic.UpdatedRev(reviewDto);
-                return  StatusCode(200);
+                return StatusCode(200);
             }
-            return  StatusCode(404);
+            return StatusCode(404);
         }
         [HttpPut("update/user/{reviewId}")]
         [Authorize]
-        public async Task<ActionResult> updateMovieUser(Guid reviewId,Review reviewDto)
+        public async Task<ActionResult> updateMovieUser(Guid reviewId, Review reviewDto)
         {
             var response = await Helper.Sendrequest("/userdata", Method.GET, Helper.GetTokenFromRequest(this.Request));
             Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content);
@@ -181,9 +180,9 @@ namespace ReviewApi.Controllers
             {
                 reviewDto.ReviewId = reviewExist.ReviewId;
                 _reviewLogic.UpdatedRev(reviewDto);
-                return  StatusCode(200);
+                return StatusCode(200);
             }
-            return  StatusCode(404);
+            return StatusCode(404);
         }
         /// <summary>
         /// delete a review by a specific reviewId
@@ -199,7 +198,7 @@ namespace ReviewApi.Controllers
             if (rev != null)
             {
                 _reviewLogic.deleteReview(rev);
-                return  StatusCode(200);
+                return StatusCode(200);
             }
 
             return StatusCode(404);
@@ -217,7 +216,7 @@ namespace ReviewApi.Controllers
             if (rev.UsernameId == userid && rev != null)
             {
                 _reviewLogic.deleteReview(rev);
-                return  StatusCode(200);
+                return StatusCode(200);
             }
 
             return StatusCode(404);
@@ -232,11 +231,11 @@ namespace ReviewApi.Controllers
         {
             List<ReviewDto> reviews = await _reviewLogic.GetReviewsByRating(rating);
 
-            if(reviews == null)
+            if (reviews == null)
             {
                 return StatusCode(404);
             }
-            if(reviews.Count == 0)
+            if (reviews.Count == 0)
             {
                 return StatusCode(204);
             }
@@ -250,20 +249,40 @@ namespace ReviewApi.Controllers
         /// <param name="rating"></param>
         /// <returns></returns>
         [HttpGet("/byRating/{imdb}/{rating}")]
-        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByRating(string imdb,int rating)
+        public async Task<ActionResult<List<ReviewDto>>> GetReviewsByRating(string imdb, int rating)
         {
-            List<ReviewDto> reviews = await _reviewLogic.GetReviewsByRating(imdb,rating);
+            List<ReviewDto> reviews = await _reviewLogic.GetReviewsByRating(imdb, rating);
 
-            if(reviews == null)
+            if (reviews == null)
             {
                 return StatusCode(404);
             }
-            if(reviews.Count == 0)
+            if (reviews.Count == 0)
             {
                 return StatusCode(204);
             }
             StatusCode(200);
             return reviews;
+        }
+        /// <summary>
+        /// return a list of reviews bases on a ReviewId List  (Admin tool)
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [HttpPost("reportedReviews")]
+        public async Task<ActionResult<List<ReviewDto>>> getListOfReviewsByIDS([FromBody] List<string> ids)
+        {
+            List<ReviewDto> revDto = await _reviewLogic.GetReviewsByIDS(ids);
+            if (revDto == null)
+            {
+                return StatusCode(404);
+            }
+            if (revDto.Count == 0)
+            {
+                return StatusCode(204);
+            }
+            StatusCode(200);
+            return revDto;
         }
     }
 }
