@@ -27,7 +27,7 @@ namespace Testing
 
             var revDto = await ReviewMapper.RepoReviewToReviewAsync(review);
 
-            Assert.Equal(review.UsernameId, revDto.Usernameid);
+            Assert.Equal(review.ImdbId, revDto.Imdbid);
 
         }
         [Fact]
