@@ -37,7 +37,7 @@ namespace Logic
             var repoReviews = await _repo.GetMovieReviews(movieid);
             if (repoReviews == null || repoReviews.Count == 0)
             {
-                Console.WriteLine("MovieLogic.GetReviews() was called for a movie that doesn't exist.");
+                _logger.LogInformation($"ReviewLogic.GetReviews() was called for a movie that doesn't exist {movieid}");
                 return null;
             }
 
@@ -56,6 +56,7 @@ namespace Logic
             List<Review> reviews = await _repo.getListofReviewsByUser(userId);
             if (reviews == null)
             {
+                _logger.LogInformation($"MovieLogic.GetReviewsByUser() was called for a user that doesn't exist {userId}");
                 return null;
             }
 
@@ -78,7 +79,7 @@ namespace Logic
         {
             if (page < 1)
             {
-                Console.WriteLine("ReviewLogic.GetReviewsPage() was called with a negative or zero page number.");
+                _logger.LogInformation($"ReviewLogic.GetReviewsPage() was called with a negative or zero page number {page}");
                 return null;
             }
 
@@ -86,7 +87,7 @@ namespace Logic
             int pageSize = (int)pageSizeSetting.IntValue;
             if (pageSize < 1)
             {
-                Console.WriteLine("ReviewLogic.GetReviewsPage() was called but the reviewspagesize is invalid");
+                _logger.LogInformation($"ReviewLogic.GetReviewsPage() was called but the reviewspagesize is invalid {pageSize}");
                 return null;
             }
 
@@ -94,7 +95,7 @@ namespace Logic
 
             if (repoReviews == null || repoReviews.Count == 0)
             {
-                Console.WriteLine("ReviewLogic.GetReviewsPage() was called for a movie that doesn't exist.");
+                _logger.LogInformation($"ReviewLogic.GetReviewsPage() was called for a movie that doesn't exist {movieid}");
                 return null;
             }
 
@@ -121,7 +122,7 @@ namespace Logic
 
             if (startIndex > numberOfReviews - 1)
             {
-                Console.WriteLine("MovieLogic.GetReviewsPage() was called for a page number without reviews.");
+                _logger.LogInformation($"MovieLogic.GetReviewsPage() was called for a page number without reviews.");
                 return null;
             }
 
@@ -144,6 +145,7 @@ namespace Logic
         {
             if (pagesize < 1 || pagesize > 100)
             {
+                _logger.LogInformation($"MovieLogic.SetReviewsPage() was called for a invalid page size");
                 return false;
             }
 
@@ -174,6 +176,7 @@ namespace Logic
             List<Review> reviews = await _repo.getAllReviewByRating(rating);
             if (reviews == null || reviews.Count == 0)
             {
+                _logger.LogInformation($"MovieLogic.GetReviewsByRating() was called for rating that doesn't exist.");
                 return null;
             }
 
@@ -192,14 +195,12 @@ namespace Logic
             List<Review> reviews = await _repo.getAllReviewByRating(imdb, rating);
             if (reviews == null || reviews.Count == 0)
             {
+                _logger.LogInformation($"MovieLogic.GetReviewsByRatingAndIMdb() was called for rating and Imdb that doesn't exist.");
                 return null;
             }
-
-            System.Console.WriteLine(reviews.Count);
             foreach (var rev in reviews)
             {
                 revDto.Add(await ReviewMapper.RepoReviewToReviewAsync(rev));
-                System.Console.WriteLine(rev.Score);
             }
 
             return revDto;
