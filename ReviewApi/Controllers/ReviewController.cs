@@ -11,6 +11,7 @@ using Repository.Models;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.Logging;
 using RestSharp;
 using ReviewApi.AuthenticationHelper;
 
@@ -25,6 +26,7 @@ namespace ReviewApi.Controllers
         public ReviewController(IReviewLogic reviewLogic)
         {
             _reviewLogic = reviewLogic;
+           
         }
 
         /// <summary>
@@ -140,7 +142,7 @@ namespace ReviewApi.Controllers
             if (reviewDto.Usernameid == userid && await _reviewLogic.CreateReview(reviewDto))
             {
                 ReviewNotification reviewNotification = _reviewLogic.GetReviewNotification(reviewDto);
-                _reviewLogic.SendNotification(reviewNotification);
+                await _reviewLogic.SendNotification(reviewNotification);
                 return StatusCode(201);
             }
 

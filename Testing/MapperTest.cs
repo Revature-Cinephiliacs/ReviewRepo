@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,5 +50,21 @@ namespace Testing
 
         }
 
+        [Fact]
+        public void TestReviewToReviewNotification()
+        {
+            var revDto = new ReviewDto()
+            {
+                Imdbid = "12345",
+                Usernameid = "Anis",
+                Reviewid = Guid.NewGuid(),
+                Score = 4,
+                Review = "Really good",
+                CreationTime = DateTime.Now
+            };
+            var revNoti = ReviewMapper.ReviewToReviewNotification(revDto);
+
+            Assert.Equal(revNoti.Imdbid,revDto.Imdbid);
+        }
     }
 }

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Logic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Models;
 using Repository;
 using Repository.Models;
@@ -20,6 +22,9 @@ namespace Testing
         readonly DbContextOptions<Cinephiliacs_ReviewContext> dbOptions =
             new DbContextOptionsBuilder<Cinephiliacs_ReviewContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
+
+        private readonly ILogger<ReviewLogic> logicLogger = new ServiceCollection().AddLogging().BuildServiceProvider()
+            .GetService<ILoggerFactory>().CreateLogger<ReviewLogic>();
 
         [Fact]
         public async Task TestGetReviews()
@@ -75,7 +80,7 @@ namespace Testing
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context2.Database.EnsureCreated();
-                var msr = new ReviewLogic(new ReviewRepoLogic(context2));
+                var msr = new ReviewLogic(new ReviewRepoLogic(context2),logicLogger);
                 var msr2 = new ReviewController(msr);
                 result3 = await msr2.GetReviews("12345");
                 result2 = await msr.GetReviews("12345");
@@ -187,7 +192,7 @@ namespace Testing
             {
 
                 context2.Database.EnsureCreated();
-                var msr = new ReviewLogic(new ReviewRepoLogic(context2));
+                var msr = new ReviewLogic(new ReviewRepoLogic(context2),logicLogger);
                 var msr2 = new ReviewController(msr);
                 setting.Setting1 = "reviewspagesize";
                 setting.IntValue = page;
@@ -228,7 +233,7 @@ namespace Testing
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context2.Database.EnsureCreated();
-                var msr = new ReviewLogic(new ReviewRepoLogic(context2));
+                var msr = new ReviewLogic(new ReviewRepoLogic(context2),logicLogger);
                 var msr2 = new ReviewController(msr);
                 result2 = await msr.GetReviewsPage("12345", page, "ratingasc");
                 result3 = await msr2.GetReviewsPage("12345", page, "ratingasc");
@@ -438,7 +443,7 @@ namespace Testing
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context2.Database.EnsureCreated();
-                var msr = new ReviewLogic(new ReviewRepoLogic(context2));
+                var msr = new ReviewLogic(new ReviewRepoLogic(context2),logicLogger);
                 var msr2 = new ReviewController(msr);
                 result2 = await msr.GetReviewsByRating("12345", 5);
                 result3 = await msr2.GetReviewsByRating("12345", 5);
@@ -471,7 +476,7 @@ namespace Testing
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context2.Database.EnsureCreated();
-                var msr = new ReviewLogic(new ReviewRepoLogic(context2));
+                var msr = new ReviewLogic(new ReviewRepoLogic(context2),logicLogger);
                 var msr2 = new ReviewController(msr);
                 result2 = await msr.GetReviewsByRating(5);
                 result3 = await msr2.GetReviewsByRating(5);
@@ -675,7 +680,7 @@ namespace Testing
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context2.Database.EnsureCreated();
-                var msr = new ReviewLogic(new ReviewRepoLogic(context2));
+                var msr = new ReviewLogic(new ReviewRepoLogic(context2),logicLogger);
                 var msr2 = new ReviewController(msr);
                 List<string> ids = new List<string>();
                 foreach (var guid in idGuids)
@@ -695,6 +700,24 @@ namespace Testing
             var expected = false;
             var actual = await reviewLogic.SendNotification(new ReviewNotification());
             Assert.Equal(expected, actual);
+        }
+      
+        [Fact]
+        public void TestGetReviewNotification()
+        {
+            var revDto = new ReviewDto()
+            {
+                Imdbid = "12345",
+                Usernameid = "Anis",
+                Reviewid = Guid.NewGuid(),
+                Score = 4,
+                Review = "Really good",
+                CreationTime = DateTime.Now
+            };
+            var msr = new ReviewLogic();
+            var revNoti = msr.GetReviewNotification(revDto);
+
+            Assert.Equal(revNoti.Reviewid,revDto.Reviewid);
         }
     }
 }
