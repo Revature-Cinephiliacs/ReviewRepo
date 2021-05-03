@@ -6,7 +6,7 @@ using Models;
 using Repository;
 using Repository.Models;
 using System.Net.Http;
-
+using Microsoft.Extensions.Logging;
 
 
 namespace Logic
@@ -14,11 +14,18 @@ namespace Logic
     public class ReviewLogic : Interfaces.IReviewLogic
     {
         private readonly ReviewRepoLogic _repo;
+        private readonly ILogger<ReviewLogic> _logger;
 
         public ReviewLogic(ReviewRepoLogic repo)
         {
             _repo = repo;
         }
+        public ReviewLogic(ReviewRepoLogic repo,ILogger<ReviewLogic> logger)
+        {
+            _repo = repo;
+            _logger = logger;
+        }
+        public ReviewLogic() { }
 
         /// <summary>
         /// Returns a list of every ReviewDto object whose Movieid is equal to

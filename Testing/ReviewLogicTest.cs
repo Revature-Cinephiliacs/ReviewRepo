@@ -687,5 +687,23 @@ namespace Testing
 
             Assert.Null(result3.Value);
         }
+
+        [Fact]
+        public void TestGetReviewNotification()
+        {
+            var revDto = new ReviewDto()
+            {
+                Imdbid = "12345",
+                Usernameid = "Anis",
+                Reviewid = Guid.NewGuid(),
+                Score = 4,
+                Review = "Really good",
+                CreationTime = DateTime.Now
+            };
+            var msr = new ReviewLogic();
+             var revNoti = msr.GetReviewNotification(revDto);
+
+             Assert.Equal(revNoti.Reviewid,revDto.Reviewid);
+        }
     }
 }
