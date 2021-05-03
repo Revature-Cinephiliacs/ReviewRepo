@@ -33,8 +33,6 @@ namespace ReviewRepo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
@@ -44,12 +42,15 @@ namespace ReviewRepo
                                         "http://20.94.137.143", //Frontend
                                         "http://20.189.29.112", //Admintools
                                         "http://20.45.2.119", //User
-                                        "http://localhost:4200"
+                                        "http://localhost:4200",
+                                        "https://cinephiliacs.org",
+                                        "https://cinephiliacsapp.azurewebsites.net"
                                         )
                                        .AllowAnyHeader()
                                        .AllowAnyMethod();
                                 });
             });
+            services.AddControllers();
             var myConnectionString = Configuration.GetConnectionString("Cinephiliacs_Review");
             services.AddDbContext<Cinephiliacs_ReviewContext>(options =>
             {
