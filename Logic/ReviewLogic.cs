@@ -34,7 +34,7 @@ namespace Logic
             var reviews = new List<ReviewDto>();
             foreach (var repoReview in repoReviews)
             {
-                reviews.Add(ReviewMapper.RepoReviewToReview(repoReview));
+                reviews.Add(await ReviewMapper.RepoReviewToReviewAsync(repoReview));
             }
             return reviews;
         }
@@ -51,7 +51,7 @@ namespace Logic
 
             foreach (var rev in reviews)
             {
-                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+                revDto.Add(await ReviewMapper.RepoReviewToReviewAsync(rev));
             }
 
             return revDto;
@@ -125,7 +125,7 @@ namespace Logic
 
             for (int i = startIndex; i <= endIndex; i++)
             {
-                reviews.Add(ReviewMapper.RepoReviewToReview(repoReviews[i]));
+                reviews.Add(await ReviewMapper.RepoReviewToReviewAsync(repoReviews[i]));
             }
             return reviews;
         }
@@ -169,7 +169,7 @@ namespace Logic
 
             foreach (var rev in reviews)
             {
-                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+                revDto.Add(await ReviewMapper.RepoReviewToReviewAsync(rev));
             }
 
             return revDto;
@@ -185,9 +185,11 @@ namespace Logic
                 return null;
             }
 
+            System.Console.WriteLine(reviews.Count);
             foreach (var rev in reviews)
             {
-                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+                revDto.Add(await ReviewMapper.RepoReviewToReviewAsync(rev));
+                System.Console.WriteLine(rev.Score);
             }
 
             return revDto;
@@ -203,7 +205,7 @@ namespace Logic
             
             foreach (var rev in await _repo.getAllReviewsBYIDS(ids))
             {
-                revDto.Add(ReviewMapper.RepoReviewToReview(rev));
+                revDto.Add(await ReviewMapper.RepoReviewToReviewAsync(rev));
             }
             return revDto;
         }
