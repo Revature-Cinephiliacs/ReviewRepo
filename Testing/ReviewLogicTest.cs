@@ -135,7 +135,7 @@ namespace Testing
                 result3 = await msr2.GetReviewsByUserId(Guid.NewGuid().ToString());
                 result2 = await msr.GetReviewsByUser(Guid.NewGuid().ToString());
             }
-            Assert.Null(result2);
+            Assert.Empty(result2);
             Assert.Null(result3.Value);
         }
         [Fact]
