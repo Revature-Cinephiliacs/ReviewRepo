@@ -63,7 +63,8 @@ stages:
           scannerMode: 'MSBuild'
           projectKey: 'Revature-Cinephiliacs_ReviewRepo'
           projectName: 'ReviewRepo'
-          extraProperties: 
+          extraProperties: |
+            sonar.exclusions=/obj/,/lib/,/*.dll,/ReviewApi/**,/Migrations/**
             sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/*/coverage.opencover.xml
 
       - task: DotNetCoreCLI@2
