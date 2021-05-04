@@ -8,6 +8,8 @@ using Repository.Models;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace Logic
 {
@@ -15,6 +17,7 @@ namespace Logic
     {
         private readonly ReviewRepoLogic _repo;
         private readonly ILogger<ReviewLogic> _logger;
+        private readonly string _movieapi = "http://20.94.153.81/movie/";
 
         public ReviewLogic(ReviewRepoLogic repo)
         {
@@ -242,9 +245,13 @@ namespace Logic
         /// <returns></returns>
         public async Task<bool> SendNotification(ReviewNotification reviewNotification)
         {
-            HttpClient client = new HttpClient();
-            string path = "http://20.94.153.81/movie/review/notification";
-            HttpResponseMessage response = await client.PostAsJsonAsync(path, reviewNotification);
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            HttpClient client = new HttpClient(clientHandler);
+            string path = $"{_movieapi}review/notification";
+            var json = JsonConvert.SerializeObject(reviewNotification);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(path, data);
             if(response.IsSuccessStatusCode)
             {   
                 return true;

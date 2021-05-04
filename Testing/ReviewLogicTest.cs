@@ -694,6 +694,15 @@ namespace Testing
         }
 
         [Fact]
+        public async void TestSendNotification()
+        {
+            ReviewLogic reviewLogic = new ReviewLogic(new ReviewRepoLogic(new Cinephiliacs_ReviewContext(dbOptions)));
+            var expected = true;
+            var actual = await reviewLogic.SendNotification(new ReviewNotification());
+            Assert.Equal(expected, actual);
+        }
+      
+        [Fact]
         public void TestGetReviewNotification()
         {
             var revDto = new ReviewDto()
@@ -706,9 +715,9 @@ namespace Testing
                 CreationTime = DateTime.Now
             };
             var msr = new ReviewLogic();
-             var revNoti = msr.GetReviewNotification(revDto);
+            var revNoti = msr.GetReviewNotification(revDto);
 
-             Assert.Equal(revNoti.Reviewid,revDto.Reviewid);
+            Assert.Equal(revNoti.Reviewid,revDto.Reviewid);
         }
     }
 }
