@@ -43,6 +43,7 @@ namespace ReviewRepo
                                         "http://20.189.29.112", //Admintools
                                         "http://20.45.2.119", //User
                                         "http://localhost:4200",
+                                        "https://localhost:6002",
                                         "https://cinephiliacs.org",
                                         "https://cinephiliacsapp.azurewebsites.net"
                                         )
