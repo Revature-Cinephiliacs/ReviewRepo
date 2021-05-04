@@ -62,16 +62,14 @@ namespace Testing
         [Fact]
         public void TestReviewNotification()
         {
-            var noti = new ReviewNotification()
+            var reviewNotification = new ReviewNotification()
             {
-              Imdbid = "12345",
-              Usernameid = "Anis",
-             Reviewid   = Guid.NewGuid()
+                Imdbid = "Anis",
+                Usernameid = "AlsoAnis"
             };
-            var expected = "12345";
-            var actual = noti.Imdbid;
-
-            Assert.Equal(expected,actual);
+            var expected = "Anis";
+            var actual = reviewNotification.Imdbid;
+            Assert.Equal(expected, actual);
         }
     }
 }
