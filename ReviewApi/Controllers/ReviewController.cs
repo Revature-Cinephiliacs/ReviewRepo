@@ -126,6 +126,7 @@ namespace ReviewApi.Controllers
         /// <param name="reviewDto"></param>
         /// <returns></returns>
         [HttpPost("reviewDto")]
+        [Authorize]
         public async Task<ActionResult> CreateReview([FromBody] ReviewDto reviewDto)
         {
             var response = await Helper.Sendrequest("/userdata", Method.GET, Helper.GetTokenFromRequest(this.Request));
