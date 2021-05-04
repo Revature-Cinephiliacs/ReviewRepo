@@ -12,7 +12,6 @@ namespace Models
         [Required]
         public string Usernameid { get; set; }
 
-        [Required]
         public Guid Reviewid { get; set; }
 
         [Required]

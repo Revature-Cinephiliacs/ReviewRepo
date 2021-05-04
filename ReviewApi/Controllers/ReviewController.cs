@@ -126,13 +126,12 @@ namespace ReviewApi.Controllers
         /// <param name="reviewDto"></param>
         /// <returns></returns>
         [HttpPost("reviewDto")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult> CreateReview([FromBody] ReviewDto reviewDto)
         {
-            // var response = await Helper.Sendrequest("/userdata", Method.GET, Helper.GetTokenFromRequest(this.Request));
-            // Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content);
-            // var userid = dictionary["sub"];
-            var userid = "auth0|6080463b6b4de900695c3230";
+            var response = await Helper.Sendrequest("/userdata", Method.GET, Helper.GetTokenFromRequest(this.Request));
+            Dictionary<string, string> dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content);
+            var userid = dictionary["sub"];
             if (!ModelState.IsValid)
             {
                 Console.WriteLine("ReviewController.CreateReview() was called with invalid body data.");

@@ -51,7 +51,7 @@ namespace ReviewApi.AuthenticationHelper
         /// <returns>The response of the request</returns>
         public async static Task<IRestResponse> Sendrequest(string urlExtension, Method method, string token)
         {
-            const string baseUrl = "https://localhost:5001/Authentication";
+            const string baseUrl = "http://20.45.0.16/Authentication";
             var client = new RestClient(baseUrl + urlExtension);
             client.Timeout = -1;
             var request = new RestRequest(method);
