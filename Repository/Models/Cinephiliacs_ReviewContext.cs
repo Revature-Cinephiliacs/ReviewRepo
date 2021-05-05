@@ -72,10 +72,6 @@ namespace Repository.Models
                     .HasMaxLength(255)
                     .HasColumnName("stringValue");
             });
-
-            //OnModelCreatingPartial(modelBuilder);
         }
-
-        //partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
