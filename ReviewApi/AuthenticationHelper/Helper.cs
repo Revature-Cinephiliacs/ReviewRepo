@@ -17,31 +17,6 @@ namespace ReviewApi.AuthenticationHelper
             return request.Headers.FirstOrDefault(h => h.Key == "Authorization").Value;
         }
 
-
-        /// <summary>
-        /// Get user dictionary from Auth0 using the current request.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns>A dictionary of user data</returns>
-        // public async Task<Dictionary<string, string>> GetUserAuth0Dictionary(Microsoft.AspNetCore.Http.HttpRequest request)
-        // {
-        //     string token = GetTokenFromRequest(request);
-        //     IRestResponse response = await Sendrequest("/userinfo", Method.GET, token);
-        //     System.Console.WriteLine("user data:");
-        //     Console.WriteLine(response.Content);
-        //     System.Console.WriteLine("response status");
-        //     Console.WriteLine(response.StatusCode);
-        //     Console.WriteLine(response.IsSuccessful);
-        //     if (response.IsSuccessful)
-        //     {
-        //         return JsonConvert.DeserializeObject<Dictionary<string, string>>(response.Content);
-        //     }
-        //     else
-        //     {
-        //         return null;
-        //     }
-        // }
-
         /// <summary>
         /// Send request to Auth0
         /// </summary>

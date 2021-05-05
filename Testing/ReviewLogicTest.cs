@@ -135,12 +135,12 @@ namespace Testing
             using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context2.Database.EnsureCreated();
-                var msr = new ReviewLogic(new ReviewRepoLogic(context2));
+                var msr = new ReviewLogic(new ReviewRepoLogic(context2), logicLogger);
                 var msr2 = new ReviewController(msr);
                 result3 = await msr2.GetReviewsByUserId(Guid.NewGuid().ToString());
                 result2 = await msr.GetReviewsByUser(Guid.NewGuid().ToString());
             }
-            Assert.Empty(result2);
+            Assert.Null(result2);
             Assert.Null(result3.Value);
         }
         [Fact]
@@ -202,101 +202,6 @@ namespace Testing
             Assert.False(result);
             Assert.Equal("Microsoft.AspNetCore.Mvc.StatusCodeResult", result2.ToString());
         }
-
-        [Fact]
-        public async Task TestGetReviewPageBadPath()
-        {
-            var id = Guid.NewGuid().ToString();
-            int page = -5;
-            List<Review> reviews = new List<Review>();
-            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = id, CreationTime = DateTime.Now, ImdbId = "12345", Score = 54 };
-            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = id, CreationTime = DateTime.Now, ImdbId = "12345", Score = 5 };
-
-            reviews.Add(review3);
-            reviews.Add(review4);
-            List<ReviewDto> result1 = new List<ReviewDto>();
-            using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
-            {
-                context1.Database.EnsureDeleted();
-                context1.Database.EnsureCreated();
-                context1.Add(review3);
-                context1.Add(review4);
-                context1.SaveChanges();
-                List<Review> reviews2 = await context1.Reviews.Where(r => r.UsernameId == id).ToListAsync();
-                foreach (var revDto in reviews2)
-                {
-                    result1.Add(await ReviewMapper.RepoReviewToReviewAsync(revDto));
-                }
-            }
-            List<ReviewDto> result2;
-            ActionResult<List<ReviewDto>> result3;
-            using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
-            {
-                context2.Database.EnsureCreated();
-                var msr = new ReviewLogic(new ReviewRepoLogic(context2),logicLogger);
-                var msr2 = new ReviewController(msr);
-                result2 = await msr.GetReviewsPage("12345", page, "ratingasc");
-                result3 = await msr2.GetReviewsPage("12345", page, "ratingasc");
-            }
-            Assert.Null(result2);
-            Assert.Null(result3.Value);
-        }
-        [Fact]
-        public async Task TestGetReviewPageSizeBadPath()
-        {
-
-            var id = Guid.NewGuid().ToString();
-
-            List<Review> reviews = new List<Review>();
-            var review1 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = id, CreationTime = DateTime.Now, ImdbId = "12345", Score = 4 };
-            var review2 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = id, CreationTime = DateTime.Now, ImdbId = "12345", Score = 5 };
-
-            var setting = new Setting() { SettingId = Guid.NewGuid(), IntValue = -6, Setting1 = "reviewspagesize" };
-
-            reviews.Add(review1);
-            reviews.Add(review2);
-            List<ReviewDto> result1 = new List<ReviewDto>();
-            using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
-            {
-                context1.Database.EnsureDeleted();
-                context1.Database.EnsureCreated();
-                context1.Reviews.Add(review1);
-                context1.Reviews.Add(review2);
-                context1.Settings.Add(setting);
-                context1.SaveChanges();
-                List<Review> reviews2 = await context1.Reviews.Where(r => r.UsernameId == id).ToListAsync();
-                foreach (var revDto in reviews2)
-                {
-                    result1.Add(await ReviewMapper.RepoReviewToReviewAsync(revDto));
-                }
-            }
-            List<ReviewDto> result2;
-            ActionResult<List<ReviewDto>> result3 = null;
-            using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
-            {
-                int page = 6;
-                context2.Database.EnsureCreated();
-                var msr = new ReviewLogic(new ReviewRepoLogic(context2));
-                var msr2 = new ReviewRepoLogic(context2);
-                var msr3 = new ReviewController(msr);
-                Setting set = msr2.GetSetting("reviewspagesize");
-                int pagesize = (int)set.IntValue;
-                if (pagesize < 1)
-                {
-                    result2 = null;
-                }
-                else
-                {
-                    result2 = await msr.GetReviewsPage("12345", page, "ratingasc");
-                    result3 = await msr3.GetReviewsPage("12345", page, "ratingasc");
-                }
-
-            }
-            Assert.Null(result2);
-            Assert.Null(result3);
-
-        }
-
         [Fact]
         public async Task ListOfReviewsByRating()
         {
@@ -718,6 +623,45 @@ namespace Testing
             var revNoti = msr.GetReviewNotification(revDto);
 
             Assert.Equal(revNoti.Reviewid,revDto.Reviewid);
+        }
+
+        [Fact]
+        public async Task TestGetReviewPageBadPath()
+        {
+            var id = Guid.NewGuid().ToString();
+            int page = -5;
+            List<Review> reviews = new List<Review>();
+            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = id, CreationTime = DateTime.Now, ImdbId = "12345", Score = 54 };
+            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = id, CreationTime = DateTime.Now, ImdbId = "12345", Score = 5 };
+
+            reviews.Add(review3);
+            reviews.Add(review4);
+            List<ReviewDto> result1 = new List<ReviewDto>();
+            using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context1.Database.EnsureDeleted();
+                context1.Database.EnsureCreated();
+                context1.Add(review3);
+                context1.Add(review4);
+                context1.SaveChanges();
+                List<Review> reviews2 = await context1.Reviews.Where(r => r.UsernameId == id).ToListAsync();
+                foreach (var revDto in reviews2)
+                {
+                    result1.Add(await ReviewMapper.RepoReviewToReviewAsync(revDto));
+                }
+            }
+            List<ReviewDto> result2;
+            ActionResult<List<ReviewDto>> result3;
+            using (var context2 = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context2.Database.EnsureCreated();
+                var msr = new ReviewLogic(new ReviewRepoLogic(context2),logicLogger);
+                var msr2 = new ReviewController(msr);
+                result2 = await msr.GetReviewsPage("12345", page, "ratingasc");
+                result3 = await msr2.GetReviewsPage("12345", page, "ratingasc");
+            }
+            Assert.Null(result2);
+            Assert.Null(result3.Value);
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Logic
             List<ReviewDto> revDto = new List<ReviewDto>();
 
             List<Review> reviews = await _repo.getListofReviewsByUser(userId);
-            if (reviews == null)
+            if (reviews == null || reviews.Count == 0)
             {
                 _logger.LogInformation($"MovieLogic.GetReviewsByUser() was called for a user that doesn't exist {userId}");
                 return null;
