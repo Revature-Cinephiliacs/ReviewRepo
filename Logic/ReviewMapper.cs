@@ -34,6 +34,7 @@ namespace Logic
         public static Review ReviewToRepoReview(ReviewDto reviewDto)
         {
             var repoReview = new Review();
+            repoReview.ReviewId = reviewDto.Reviewid;
             repoReview.UsernameId = reviewDto.Usernameid;
             repoReview.ImdbId = reviewDto.Imdbid;
             repoReview.Score = reviewDto.Score;
