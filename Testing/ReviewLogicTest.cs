@@ -599,7 +599,7 @@ namespace Testing
         }
 
         [Fact]
-        public async void TestSendNotification()
+        public async Task TestSendNotification()
         {
             ReviewLogic reviewLogic = new ReviewLogic(new ReviewRepoLogic(new Cinephiliacs_ReviewContext(dbOptions)));
             var expected = true;
