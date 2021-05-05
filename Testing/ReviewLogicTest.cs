@@ -472,21 +472,19 @@ namespace Testing
         }
 
         [Fact]
-        public async Task AddReviewtest()
+        public void AddReviewtest()
         {
             var review = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345", Score = 54 };
             var review2 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, ImdbId = "12345", Score = 54 };
 
-            ReviewDto reviewDto;
-            ReviewDto reviewDto2;
+            ReviewDto reviewDto = new ReviewDto() { Reviewid = Guid.NewGuid(), Usernameid = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, Imdbid = "12345", Score = 54 };
+            ReviewDto reviewDto2 = new ReviewDto() { Reviewid = Guid.NewGuid(), Usernameid = Guid.NewGuid().ToString(), CreationTime = DateTime.Now, Imdbid = "12345", Score = 54 };
             using (var context1 = new Cinephiliacs_ReviewContext(dbOptions))
             {
                 context1.Database.EnsureDeleted();
                 context1.Database.EnsureCreated();
                 context1.Add(review);
                 context1.Add(review2);
-                reviewDto = await ReviewMapper.RepoReviewToReviewAsync(review);
-                reviewDto2 = await ReviewMapper.RepoReviewToReviewAsync(review2);
                 context1.SaveChanges();
             }
 

@@ -12,7 +12,7 @@ namespace Models
         [Required]
         public string Usernameid { get; set; }
 
-        public Guid Reviewid { get; set; }
+        public Guid Reviewid { get; set; } = Guid.NewGuid();
 
         [Required]
         [Range(0,5)]
