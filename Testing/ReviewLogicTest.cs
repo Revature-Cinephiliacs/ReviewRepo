@@ -602,7 +602,7 @@ namespace Testing
         public async Task TestSendNotification()
         {
             ReviewLogic reviewLogic = new ReviewLogic(new ReviewRepoLogic(new Cinephiliacs_ReviewContext(dbOptions)));
-            var expected = false;
+            var expected = true;
             var actual = await reviewLogic.SendNotification(new ReviewNotification());
             Assert.Equal(expected, actual);
         }
