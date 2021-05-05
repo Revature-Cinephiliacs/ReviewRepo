@@ -10,6 +10,6 @@ namespace Models
         /// <value></value>
         public string Imdbid { get; set; }
         public string Usernameid { get; set; }
-        public Guid Reviewid { get; set; }
+        public string Reviewid { get; set; }
     }
 }
