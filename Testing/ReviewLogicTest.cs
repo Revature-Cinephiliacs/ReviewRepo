@@ -663,5 +663,281 @@ namespace Testing
             Assert.Null(result2);
             Assert.Null(result3.Value);
         }
+
+        [Fact]
+        public async Task GetReviewsPageTestRatingAsc()
+        {
+            string movieId = "ttt1111111";
+            var dateTime1 = DateTime.Now;
+            dateTime1 = dateTime1.AddSeconds(-100);
+            var dateTime2 = DateTime.Now;
+            var dateTime3 = DateTime.Now;
+            dateTime3 = dateTime3.AddSeconds(-200);
+            var dateTime4 = DateTime.Now;
+            dateTime4 = dateTime4.AddSeconds(-150);
+
+            var review1 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime1, ImdbId = movieId, Score = 3 };
+            var review2 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime2, ImdbId = movieId, Score = 5 };
+            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime3, ImdbId = movieId, Score = 1 };
+            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime4, ImdbId = movieId, Score = 2 };
+
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                var setting = new Setting();
+                setting.Setting1 = "reviewspagesize";
+                setting.IntValue = 5;
+                setting.StringValue = "";
+                context.Settings.Add(setting);
+
+                context.Reviews.Add(review1);
+                context.Reviews.Add(review2);
+                context.Reviews.Add(review3);
+                context.Reviews.Add(review4);
+                context.SaveChanges();
+            }
+
+            List<ReviewDto> result = new List<ReviewDto>();
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureCreated();
+                var logic = new ReviewLogic(new ReviewRepoLogic(context), logicLogger);
+                result = await logic.GetReviewsPage(movieId, 1, "ratingasc");
+            }
+
+            Assert.Equal(result[0].Reviewid, review3.ReviewId);
+        }
+
+        [Fact]
+        public async Task GetReviewsPageTestRatingDsc()
+        {
+            string movieId = "ttt1111111";
+            var dateTime1 = DateTime.Now;
+            dateTime1 = dateTime1.AddSeconds(-100);
+            var dateTime2 = DateTime.Now;
+            var dateTime3 = DateTime.Now;
+            dateTime3 = dateTime3.AddSeconds(-200);
+            var dateTime4 = DateTime.Now;
+            dateTime4 = dateTime4.AddSeconds(-150);
+
+            var review1 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime1, ImdbId = movieId, Score = 3 };
+            var review2 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime2, ImdbId = movieId, Score = 5 };
+            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime3, ImdbId = movieId, Score = 1 };
+            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime4, ImdbId = movieId, Score = 2 };
+
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                var setting = new Setting();
+                setting.Setting1 = "reviewspagesize";
+                setting.IntValue = 5;
+                setting.StringValue = "";
+                context.Settings.Add(setting);
+
+                context.Reviews.Add(review1);
+                context.Reviews.Add(review2);
+                context.Reviews.Add(review3);
+                context.Reviews.Add(review4);
+                context.SaveChanges();
+            }
+
+            List<ReviewDto> result = new List<ReviewDto>();
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureCreated();
+                var logic = new ReviewLogic(new ReviewRepoLogic(context), logicLogger);
+                result = await logic.GetReviewsPage(movieId, 1, "ratingdsc");
+            }
+
+            Assert.Equal(result[0].Reviewid, review2.ReviewId);
+        }
+
+        [Fact]
+        public async Task GetReviewsPageTestTimeAsc()
+        {
+            string movieId = "ttt1111111";
+            var dateTime1 = DateTime.Now;
+            dateTime1 = dateTime1.AddSeconds(-100);
+            var dateTime2 = DateTime.Now;
+            var dateTime3 = DateTime.Now;
+            dateTime3 = dateTime3.AddSeconds(-200);
+            var dateTime4 = DateTime.Now;
+            dateTime4 = dateTime4.AddSeconds(-150);
+
+            var review1 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime1, ImdbId = movieId, Score = 3 };
+            var review2 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime2, ImdbId = movieId, Score = 5 };
+            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime3, ImdbId = movieId, Score = 1 };
+            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime4, ImdbId = movieId, Score = 2 };
+
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                var setting = new Setting();
+                setting.Setting1 = "reviewspagesize";
+                setting.IntValue = 5;
+                setting.StringValue = "";
+                context.Settings.Add(setting);
+
+                context.Reviews.Add(review1);
+                context.Reviews.Add(review2);
+                context.Reviews.Add(review3);
+                context.Reviews.Add(review4);
+                context.SaveChanges();
+            }
+
+            List<ReviewDto> result = new List<ReviewDto>();
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureCreated();
+                var logic = new ReviewLogic(new ReviewRepoLogic(context), logicLogger);
+                result = await logic.GetReviewsPage(movieId, 1, "timeasc");
+            }
+
+            Assert.Equal(result[0].Reviewid, review3.ReviewId);
+        }
+
+        [Fact]
+        public async Task GetReviewsPageTestTimeDsc()
+        {
+            string movieId = "ttt1111111";
+            var dateTime1 = DateTime.Now;
+            dateTime1 = dateTime1.AddSeconds(-100);
+            var dateTime2 = DateTime.Now;
+            var dateTime3 = DateTime.Now;
+            dateTime3 = dateTime3.AddSeconds(-200);
+            var dateTime4 = DateTime.Now;
+            dateTime4 = dateTime4.AddSeconds(-150);
+
+            var review1 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime1, ImdbId = movieId, Score = 3 };
+            var review2 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime2, ImdbId = movieId, Score = 5 };
+            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime3, ImdbId = movieId, Score = 1 };
+            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime4, ImdbId = movieId, Score = 2 };
+
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                var setting = new Setting();
+                setting.Setting1 = "reviewspagesize";
+                setting.IntValue = 5;
+                setting.StringValue = "";
+                context.Settings.Add(setting);
+
+                context.Reviews.Add(review1);
+                context.Reviews.Add(review2);
+                context.Reviews.Add(review3);
+                context.Reviews.Add(review4);
+                context.SaveChanges();
+            }
+
+            List<ReviewDto> result = new List<ReviewDto>();
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureCreated();
+                var logic = new ReviewLogic(new ReviewRepoLogic(context), logicLogger);
+                result = await logic.GetReviewsPage(movieId, 1, "timedsc");
+            }
+
+            Assert.Equal(result[0].Reviewid, review2.ReviewId);
+        }
+
+        [Fact]
+        public async Task GetReviewsPageTestBadSort()
+        {
+            string movieId = "ttt1111111";
+            var dateTime1 = DateTime.Now;
+            dateTime1 = dateTime1.AddSeconds(-100);
+            var dateTime2 = DateTime.Now;
+            var dateTime3 = DateTime.Now;
+            dateTime3 = dateTime3.AddSeconds(-200);
+            var dateTime4 = DateTime.Now;
+            dateTime4 = dateTime4.AddSeconds(-150);
+
+            var review1 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime1, ImdbId = movieId, Score = 3 };
+            var review2 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime2, ImdbId = movieId, Score = 5 };
+            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime3, ImdbId = movieId, Score = 1 };
+            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime4, ImdbId = movieId, Score = 2 };
+
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                var setting = new Setting();
+                setting.Setting1 = "reviewspagesize";
+                setting.IntValue = 5;
+                setting.StringValue = "";
+                context.Settings.Add(setting);
+
+                context.Reviews.Add(review1);
+                context.Reviews.Add(review2);
+                context.Reviews.Add(review3);
+                context.Reviews.Add(review4);
+                context.SaveChanges();
+            }
+
+            List<ReviewDto> result = new List<ReviewDto>();
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureCreated();
+                var logic = new ReviewLogic(new ReviewRepoLogic(context), logicLogger);
+                result = await logic.GetReviewsPage(movieId, 1, "wrong");
+            }
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetReviewsPageTestBadPage()
+        {
+            string movieId = "ttt1111111";
+            var dateTime1 = DateTime.Now;
+            dateTime1 = dateTime1.AddSeconds(-100);
+            var dateTime2 = DateTime.Now;
+            var dateTime3 = DateTime.Now;
+            dateTime3 = dateTime3.AddSeconds(-200);
+            var dateTime4 = DateTime.Now;
+            dateTime4 = dateTime4.AddSeconds(-150);
+
+            var review1 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime1, ImdbId = movieId, Score = 3 };
+            var review2 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime2, ImdbId = movieId, Score = 5 };
+            var review3 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime3, ImdbId = movieId, Score = 1 };
+            var review4 = new Review() { ReviewId = Guid.NewGuid(), UsernameId = Guid.NewGuid().ToString(), CreationTime = dateTime4, ImdbId = movieId, Score = 2 };
+
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                var setting = new Setting();
+                setting.Setting1 = "reviewspagesize";
+                setting.IntValue = 5;
+                setting.StringValue = "";
+                context.Settings.Add(setting);
+
+                context.Reviews.Add(review1);
+                context.Reviews.Add(review2);
+                context.Reviews.Add(review3);
+                context.Reviews.Add(review4);
+                context.SaveChanges();
+            }
+
+            List<ReviewDto> result = new List<ReviewDto>();
+            using (var context = new Cinephiliacs_ReviewContext(dbOptions))
+            {
+                context.Database.EnsureCreated();
+                var logic = new ReviewLogic(new ReviewRepoLogic(context), logicLogger);
+                result = await logic.GetReviewsPage(movieId, 3, "timedsc");
+            }
+
+            Assert.Null(result);
+        }
     }
 }
